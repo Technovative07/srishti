@@ -1,0 +1,2565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <style>
+    :root {
+      --primary-color: #198754;
+      --secondary-color: #343a40;
+      --accent-color: #0d6efd;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: var(--light-color);
+      overflow-x: hidden;
+      color: var(--dark-color);
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 250px;
+      background-color: var(--secondary-color);
+      color: white;
+      padding-top: 60px;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 15px 20px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--primary-color);
+      padding-left: 25px;
+    }
+
+    .sidebar a.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .sidebar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 15px 20px;
+      background-color: var(--dark-color);
+      position: fixed;
+      top: 0;
+      width: 250px;
+      z-index: 1001;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      min-height: 100vh;
+      transition: all 0.3s;
+    }
+
+    .card {
+      border: none;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      height: 100%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: white;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .card i {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+
+    .section {
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .navbar {
+      display: none;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 999;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-btn {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .table-responsive {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .badge-appointment {
+      background-color: #6f42c1;
+    }
+
+    .badge-urgent {
+      background-color: #dc3545;
+    }
+
+    .badge-routine {
+      background-color: #fd7e14;
+    }
+
+    .badge-followup {
+      background-color: #0dcaf0;
+    }
+
+    .patient-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .vital-card {
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      padding-left: 40px;
+      border-radius: 20px;
+      border: 1px solid #ddd;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 12px;
+      color: #6c757d;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 0.7rem;
+    }
+
+    .profile-header {
+      background: linear-gradient(135deg, var(--primary-color), #0b5ed7);
+      color: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0;
+      }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0b5a44;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Mobile Navbar -->
+  <div class="navbar">
+    <div class="menu-btn">
+      <i class="fas fa-bars"></i>
+    </div>
+    <div class="logo">
+      <i class="fas fa-stethoscope me-2"></i>Doctor Panel
+    </div>
+    <div>
+      <i class="fas fa-bell"></i>
+      <span class="badge bg-danger notification-badge">3</span>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <i class="fas fa-stethoscope me-2"></i>Doctor Panel
+    </div>
+    <a href="#" class="active" data-section="dashboard"><i class="fas fa-home me-2"></i>Dashboard</a>
+    <a href="#" data-section="patients"><i class="fas fa-user-injured me-2"></i>Patients <span class="badge bg-primary float-end">24</span></a>
+    <a href="#" data-section="appointments"><i class="fas fa-calendar-check me-2"></i>Appointments <span class="badge bg-warning float-end">5</span></a>
+    <a href="#" data-section="reports"><i class="fas fa-file-medical me-2"></i>Reports</a>
+    <a href="#" data-section="notes"><i class="fas fa-notes-medical me-2"></i>Clinical Notes</a>
+    <a href="#" data-section="vitals"><i class="fas fa-heartbeat me-2"></i>Vitals Monitor</a>
+    <a href="#" data-section="chat"><i class="fas fa-comments me-2"></i>Doctor Chat <span class="badge bg-success float-end">2</span></a>
+    <a href="#" data-section="telemedicine"><i class="fas fa-video me-2"></i>Telemedicine</a>
+    <a href="#" data-section="settings"><i class="fas fa-cogs me-2"></i>Settings</a>
+    <a href="#logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Dashboard Section -->
+    <div class="section active animate_animated animate_fadeIn" id="dashboard">
+      <div class="profile-header animate_animated animate_fadeInDown">
+        <div class="row align-items-center">
+          <div class="col-md-2 text-center">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Doctor" class="profile-img">
+          </div>
+          <div class="col-md-6">
+            <h2>Welcome, Dr. John Doe</h2>
+            <p class="mb-0"><i class="fas fa-briefcase-medical me-2"></i>Cardiologist | 10 Years Experience</p>
+            <p class="mb-0"><i class="fas fa-hospital me-2"></i>City General Hospital</p>
+          </div>
+          <div class="col-md-4 text-end">
+            <div class="d-flex justify-content-end gap-3">
+              <button class="btn btn-light"><i class="fas fa-calendar me-2"></i>Today: <span id="current-date"></span></button>
+              <button class="btn btn-light"><i class="fas fa-clock me-2"></i><span id="current-time"></span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-3">
+          <div class="card p-4 text-center animate_animated animate_fadeInUp" data-section="patients">
+            <i class="fas fa-user-injured"></i>
+            <h5>Patient Records</h5>
+            <p>Access and manage all your patient details here.</p>
+            <div class="mt-3">
+              <span class="badge bg-primary">24 Active</span>
+              <span class="badge bg-success ms-2">5 New</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-4 text-center animate_animated animate_fadeInUp" data-section="appointments" style="animation-delay: 0.1s">
+            <i class="fas fa-calendar-check"></i>
+            <h5>Appointments</h5>
+            <p>Manage all your upcoming patient appointments.</p>
+            <div class="mt-3">
+              <span class="badge bg-warning">5 Today</span>
+              <span class="badge bg-info ms-2">12 This Week</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-4 text-center animate_animated animate_fadeInUp" data-section="reports" style="animation-delay: 0.2s">
+            <i class="fas fa-file-medical"></i>
+            <h5>Medical Reports</h5>
+            <p>Generate, upload and share patient reports securely.</p>
+            <div class="mt-3">
+              <span class="badge bg-danger">3 Pending</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-4 text-center animate_animated animate_fadeInUp" data-section="vitals" style="animation-delay: 0.3s">
+            <i class="fas fa-heartbeat"></i>
+            <h5>Vitals Monitor</h5>
+            <p>Monitor patient vitals using real-time data graphs.</p>
+            <div class="mt-3">
+              <span class="badge bg-success">2 Active</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quick Actions Row -->
+        <div class="col-12 mt-4">
+          <h4 class="mb-4">Quick Actions</h4>
+          <div class="row g-3">
+            <div class="col-md-2 col-6">
+              <button class="btn btn-outline-primary w-100 py-3"  >
+                <i class="fas fa-plus-circle fs-4 mb-2"></i><br>
+                New Patient
+              </button>
+            </div>
+            <div class="col-md-2 col-6">
+              <button class="btn btn-outline-success w-100 py-3">
+                <i class="fas fa-calendar-plus fs-4 mb-2"></i><br>
+                New Appointment
+              </button>
+            </div>
+            <div class="col-md-2 col-6">
+              <button class="btn btn-outline-info w-100 py-3">
+                <i class="fas fa-prescription fs-4 mb-2"></i><br>
+                Write Rx
+              </button>
+            </div>
+            <div class="col-md-2 col-6">
+              <button class="btn btn-outline-warning w-100 py-3">
+                <i class="fas fa-file-invoice fs-4 mb-2"></i><br>
+                Generate Report
+              </button>
+            </div>
+            <div class="col-md-2 col-6">
+              <button class="btn btn-outline-danger w-100 py-3">
+                <i class="fas fa-notes-medical fs-4 mb-2"></i><br>
+                Clinical Note
+              </button>
+            </div>
+            <div class="col-md-2 col-6">
+              <button class="btn btn-outline-secondary w-100 py-3">
+                <i class="fas fa-video fs-4 mb-2"></i><br>
+                Start Consult
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Upcoming Appointments -->
+        <div class="col-md-6 mt-4">
+          <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5>Upcoming Appointments</h5>
+              <a href="#" class="btn btn-sm btn-outline-primary" data-section="appointments">View All</a>
+            </div>
+            <div class="list-group">
+              <div class="list-group-item border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" class="patient-avatar me-3" alt="Patient">
+                    <div>
+                      <h6 class="mb-0">Sarah Johnson</h6>
+                      <small class="text-muted">Follow-up Consultation</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <div class="badge bg-light text-dark"><i class="fas fa-clock me-1"></i> 10:30 AM</div>
+                    <div class="text-muted small mt-1">Today</div>
+                  </div>
+                </div>
+              </div>
+              <div class="list-group-item border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/men/22.jpg" class="patient-avatar me-3" alt="Patient">
+                    <div>
+                      <h6 class="mb-0">Michael Brown</h6>
+                      <small class="text-muted">New Patient</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <div class="badge bg-light text-dark"><i class="fas fa-clock me-1"></i> 2:15 PM</div>
+                    <div class="text-muted small mt-1">Today</div>
+                  </div>
+                </div>
+              </div>
+              <div class="list-group-item border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/women/68.jpg" class="patient-avatar me-3" alt="Patient">
+                    <div>
+                      <h6 class="mb-0">Emily Wilson</h6>
+                      <small class="text-muted">Routine Checkup</small>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <div class="badge bg-light text-dark"><i class="fas fa-clock me-1"></i> 9:00 AM</div>
+                    <div class="text-muted small mt-1">Tomorrow</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Patients -->
+        <div class="col-md-6 mt-4">
+          <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5>Recent Patients</h5>
+              <a href="#" class="btn btn-sm btn-outline-primary" data-section="patients">View All</a>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Patient</th>
+                    <th>Last Visit</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/men/41.jpg" class="patient-avatar me-2" alt="Patient">
+                        <div>Robert Davis</div>
+                      </div>
+                    </td>
+                    <td>2 days ago</td>
+                    <td><span class="badge bg-success">Active</span></td>
+                    <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/women/33.jpg" class="patient-avatar me-2" alt="Patient">
+                        <div>Jennifer Lee</div>
+                      </div>
+                    </td>
+                    <td>1 week ago</td>
+                    <td><span class="badge bg-warning">Follow-up</span></td>
+                    <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/men/75.jpg" class="patient-avatar me-2" alt="Patient">
+                        <div>Thomas Miller</div>
+                      </div>
+                    </td>
+                    <td>3 days ago</td>
+                    <td><span class="badge bg-danger">Critical</span></td>
+                    <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Patients Section -->
+    <div class="section" id="patients">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Patient Management</h2>
+        <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add New Patient</button>
+      </div>
+      
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" class="form-control" placeholder="Search patients by name, ID, or condition...">
+      </div>
+      
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card p-3 text-center">
+            <h3 class="text-primary">24</h3>
+            <p class="mb-0">Active Patients</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 text-center">
+            <h3 class="text-success">5</h3>
+            <p class="mb-0">New This Month</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 text-center">
+            <h3 class="text-warning">8</h3>
+            <p class="mb-0">Follow-up Needed</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 text-center">
+            <h3 class="text-danger">2</h3>
+            <p class="mb-0">Critical Condition</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card p-4">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Patient ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Last Visit</th>
+                <th>Condition</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#PT1001</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" class="patient-avatar me-2" alt="Patient">
+                    <div>Sarah Johnson</div>
+                  </div>
+                </td>
+                <td>42</td>
+                <td>Female</td>
+                <td>Today</td>
+                <td>Hypertension</td>
+                <td><span class="badge bg-success">Active</span></td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td>#PT1002</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/men/22.jpg" class="patient-avatar me-2" alt="Patient">
+                    <div>Michael Brown</div>
+                  </div>
+                </td>
+                <td>35</td>
+                <td>Male</td>
+                <td>Today</td>
+                <td>Diabetes</td>
+                <td><span class="badge bg-warning">New</span></td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td>#PT1003</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/women/68.jpg" class="patient-avatar me-2" alt="Patient">
+                    <div>Emily Wilson</div>
+                  </div>
+                </td>
+                <td>28</td>
+                <td>Female</td>
+                <td>Tomorrow</td>
+                <td>Asthma</td>
+                <td><span class="badge bg-info">Follow-up</span></td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td>#PT1004</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/men/41.jpg" class="patient-avatar me-2" alt="Patient">
+                    <div>Robert Davis</div>
+                  </div>
+                </td>
+                <td>50</td>
+                <td>Male</td>
+                <td>2 days ago</td>
+                <td>Coronary Artery</td>
+                <td><span class="badge bg-success">Active</span></td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td>#PT1005</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/women/33.jpg" class="patient-avatar me-2" alt="Patient">
+                    <div>Jennifer Lee</div>
+                  </div>
+                </td>
+                <td>45</td>
+                <td>Female</td>
+                <td>1 week ago</td>
+                <td>Arthritis</td>
+                <td><span class="badge bg-warning">Follow-up</span></td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <nav aria-label="Page navigation" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1">Previous</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!-- Appointments Section -->
+    <div class="section" id="appointments">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Appointment Schedule</h2>
+        <div>
+          <button class="btn btn-primary me-2"><i class="fas fa-plus me-2"></i>New Appointment</button>
+          <button class="btn btn-outline-secondary"><i class="fas fa-calendar-alt me-2"></i>Calendar View</button>
+        </div>
+      </div>
+      
+      <div class="row mb-4">
+        <div class="col-md-9">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary active">Today</button>
+            <button type="button" class="btn btn-outline-primary">Tomorrow</button>
+            <button type="button" class="btn btn-outline-primary">This Week</button>
+            <button type="button" class="btn btn-outline-primary">This Month</button>
+            <button type="button" class="btn btn-outline-primary">All</button>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select">
+            <option selected>Filter by Status</option>
+            <option>All Appointments</option>
+            <option>Confirmed</option>
+            <option>Pending</option>
+            <option>Cancelled</option>
+            <option>Completed</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Upcoming (5)</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="list-group list-group-flush">
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1">Sarah Johnson</h6>
+                      <small class="text-muted">10:30 AM - 11:00 AM</small>
+                    </div>
+                    <span class="badge badge-appointment">Follow-up</span>
+                  </div>
+                  <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-primary me-1">Start</button>
+                    <button class="btn btn-sm btn-outline-secondary me-1">Reschedule</button>
+                    <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1">Michael Brown</h6>
+                      <small class="text-muted">2:15 PM - 2:45 PM</small>
+                    </div>
+                    <span class="badge bg-success">New Patient</span>
+                  </div>
+                  <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-primary me-1">Start</button>
+                    <button class="btn btn-sm btn-outline-secondary me-1">Reschedule</button>
+                    <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1">Emily Wilson</h6>
+                      <small class="text-muted">9:00 AM - 9:30 AM</small>
+                    </div>
+                    <span class="badge badge-routine">Routine</span>
+                  </div>
+                  <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-primary me-1">Start</button>
+                    <button class="btn btn-sm btn-outline-secondary me-1">Reschedule</button>
+                    <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header bg-warning text-dark">
+              <h5 class="mb-0"><i class="fas fa-exclamation-circle me-2"></i>Pending (3)</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="list-group list-group-flush">
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1">David Wilson</h6>
+                      <small class="text-muted">Mar 15, 11:00 AM</small>
+                    </div>
+                    <span class="badge badge-followup">Follow-up</span>
+                  </div>
+                  <div class="mt-2">
+                    <button class="btn btn-sm btn-success me-1">Confirm</button>
+                    <button class="btn btn-sm btn-outline-secondary me-1">Reschedule</button>
+                    <button class="btn btn-sm btn-outline-danger">Reject</button>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1">Lisa Ray</h6>
+                      <small class="text-muted">Mar 16, 3:30 PM</small>
+                    </div>
+                    <span class="badge bg-info">Consultation</span>
+                  </div>
+                  <div class="mt-2">
+                    <button class="btn btn-sm btn-success me-1">Confirm</button>
+                    <button class="btn btn-sm btn-outline-secondary me-1">Reschedule</button>
+                    <button class="btn btn-sm btn-outline-danger">Reject</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-8">
+          <div class="card h-100">
+            <div class="card-header bg-light">
+              <h5 class="mb-0"><i class="fas fa-calendar-day me-2"></i>Today's Schedule</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Patient</th>
+                      <th>Type</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>9:00 AM</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://randomuser.me/api/portraits/men/75.jpg" class="patient-avatar me-2" alt="Patient">
+                          <div>Thomas Miller</div>
+                        </div>
+                      </td>
+                      <td>Follow-up</td>
+                      <td><span class="badge bg-success">Completed</span></td>
+                      <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                    </tr>
+                    <tr>
+                      <td>10:30 AM</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://randomuser.me/api/portraits/women/44.jpg" class="patient-avatar me-2" alt="Patient">
+                          <div>Sarah Johnson</div>
+                        </div>
+                      </td>
+                      <td>Consultation</td>
+                      <td><span class="badge bg-primary">In Progress</span></td>
+                      <td><button class="btn btn-sm btn-outline-primary">Join</button></td>
+                    </tr>
+                    <tr>
+                      <td>11:30 AM</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://randomuser.me/api/portraits/women/63.jpg" class="patient-avatar me-2" alt="Patient">
+                          <div>Patricia Clark</div>
+                        </div>
+                      </td>
+                      <td>New Patient</td>
+                      <td><span class="badge bg-secondary">Scheduled</span></td>
+                      <td><button class="btn btn-sm btn-outline-primary">Prepare</button></td>
+                    </tr>
+                    <tr>
+                      <td>2:15 PM</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://randomuser.me/api/portraits/men/22.jpg" class="patient-avatar me-2" alt="Patient">
+                          <div>Michael Brown</div>
+                        </div>
+                      </td>
+                      <td>New Patient</td>
+                      <td><span class="badge bg-secondary">Scheduled</span></td>
+                      <td><button class="btn btn-sm btn-outline-primary">Prepare</button></td>
+                    </tr>
+                    <tr>
+                      <td>3:30 PM</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://randomuser.me/api/portraits/men/55.jpg" class="patient-avatar me-2" alt="Patient">
+                          <div>James Wilson</div>
+                        </div>
+                      </td>
+                      <td>Follow-up</td>
+                      <td><span class="badge bg-secondary">Scheduled</span></td>
+                      <td><button class="btn btn-sm btn-outline-primary">Prepare</button></td>
+                    </tr>
+                    <tr>
+                      <td>4:45 PM</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://randomuser.me/api/portraits/women/28.jpg" class="patient-avatar me-2" alt="Patient">
+                          <div>Jessica Lee</div>
+                        </div>
+                      </td>
+                      <td>Routine</td>
+                      <td><span class="badge bg-secondary">Scheduled</span></td>
+                      <td><button class="btn btn-sm btn-outline-primary">Prepare</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports Section -->
+    <div class="section" id="reports">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Medical Reports</h2>
+        <button class="btn btn-primary" id="generateNewReportBtn"><i class="fas fa-plus me-2"></i>Generate New Report</button>
+      </div>
+      
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Report Statistics</h5>
+              <div class="d-flex justify-content-between mb-3">
+                <div>
+                  <h3 class="text-primary">48</h3>
+                  <small class="text-muted">Total Reports</small>
+                </div>
+                <div>
+                  <h3 class="text-success">32</h3>
+                  <small class="text-muted">Completed</small>
+                </div>
+                <div>
+                  <h3 class="text-warning">5</h3>
+                  <small class="text-muted">Pending Review</small>
+                </div>
+              </div>
+              <div class="progress mb-3">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 5%" aria-valuenow="5" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Recent Reports</h5>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Report ID</th>
+                      <th>Patient</th>
+                      <th>Type</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>#RPT2023001</td>
+                      <td>Sarah Johnson</td>
+                      <td>Lab Results</td>
+                      <td>Mar 10, 2023</td>
+                      <td><span class="badge bg-success">Completed</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#RPT2023002</td>
+                      <td>Michael Brown</td>
+                      <td>Diagnostic</td>
+                      <td>Mar 8, 2023</td>
+                      <td><span class="badge bg-success">Completed</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#RPT2023003</td>
+                      <td>Emily Wilson</td>
+                      <td>Imaging</td>
+                      <td>Mar 5, 2023</td>
+                      <td><span class="badge bg-warning">Pending</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#RPT2023004</td>
+                      <td>Robert Davis</td>
+                      <td>Progress</td>
+                      <td>Mar 3, 2023</td>
+                      <td><span class="badge bg-success">Completed</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#RPT2023005</td>
+                      <td>Jennifer Lee</td>
+                      <td>Lab Results</td>
+                      <td>Mar 1, 2023</td>
+                      <td><span class="badge bg-danger">Rejected</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Generate New Report</h5>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Patient</label>
+                <select class="form-select">
+                  <option selected>Select Patient</option>
+                  <option>Sarah Johnson</option>
+                  <option>Michael Brown</option>
+                  <option>Emily Wilson</option>
+                  <option>Robert Davis</option>
+                  <option>Jennifer Lee</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Report Type</label>
+                <select class="form-select">
+                  <option selected>Select Report Type</option>
+                  <option>Lab Results</option>
+                  <option>Diagnostic Report</option>
+                  <option>Imaging Report</option>
+                  <option>Progress Report</option>
+                  <option>Discharge Summary</option>
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Priority</label>
+                <select class="form-select">
+                  <option>Normal</option>
+                  <option>High</option>
+                  <option>Urgent</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Findings</label>
+              <textarea class="form-control" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Recommendations</label>
+              <textarea class="form-control" rows="3"></textarea>
+            </div>
+            <div class="text-end">
+              <button type="button" class="btn btn-secondary me-2">Cancel</button>
+              <button type="submit" class="btn btn-primary">Generate Report</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clinical Notes Section -->
+    <div class="section" id="notes">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Clinical Notes</h2>
+        <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add New Note</button>
+      </div>
+      
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Notes Statistics</h5>
+              <div class="d-flex justify-content-between mb-3">
+                <div class="text-center">
+                  <h3 class="text-primary">127</h3>
+                  <small class="text-muted">Total Notes</small>
+                </div>
+                <div class="text-center">
+                  <h3 class="text-success">24</h3>
+                  <small class="text-muted">This Month</small>
+                </div>
+                <div class="text-center">
+                  <h3 class="text-info">5</h3>
+                  <small class="text-muted">Today</small>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Search Notes</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Search notes...">
+                  <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Filter by Patient</label>
+                <select class="form-select">
+                  <option selected>All Patients</option>
+                  <option>Sarah Johnson</option>
+                  <option>Michael Brown</option>
+                  <option>Emily Wilson</option>
+                  <option>Robert Davis</option>
+                  <option>Jennifer Lee</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Filter by Date</label>
+                <select class="form-select">
+                  <option selected>All Time</option>
+                  <option>Today</option>
+                  <option>This Week</option>
+                  <option>This Month</option>
+                  <option>Last 3 Months</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">Recent Notes</h5>
+              <div class="list-group">
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6>Follow-up Consultation</h6>
+                      <small class="text-muted">Patient: Sarah Johnson | Mar 10, 2023</small>
+                      <p class="mt-2 mb-0">Patient reports improved symptoms with current medication. Blood pressure under better control. Continue current treatment plan and schedule follow-up in 4 weeks.</p>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                      <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6>Initial Assessment</h6>
+                      <small class="text-muted">Patient: Michael Brown | Mar 8, 2023</small>
+                      <p class="mt-2 mb-0">New patient presenting with type 2 diabetes. Ordered lab work including HbA1c, lipid panel, and renal function tests. Started on metformin 500mg twice daily.</p>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                      <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6>Asthma Management</h6>
+                      <small class="text-muted">Patient: Emily Wilson | Mar 5, 2023</small>
+                      <p class="mt-2 mb-0">Patient reports increased use of rescue inhaler. Adjusted maintenance medication dosage. Provided asthma action plan and scheduled follow-up in 2 weeks.</p>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                      <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6>Post-Op Check</h6>
+                      <small class="text-muted">Patient: Robert Davis | Mar 3, 2023</small>
+                      <p class="mt-2 mb-0">Patient recovering well from CABG surgery. Incision healing properly. Adjusted pain medication regimen. Cleared for light activity and cardiac rehab.</p>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                      <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6>Rheumatoid Arthritis</h6>
+                      <small class="text-muted">Patient: Jennifer Lee | Mar 1, 2023</small>
+                      <p class="mt-2 mb-0">Patient reports joint stiffness and pain. Ordered rheumatology labs and imaging. Started on NSAIDs and referred to rheumatologist for further evaluation.</p>
+                    </div>
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                      <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></button>
+                      <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <nav aria-label="Page navigation" class="mt-3">
+                <ul class="pagination justify-content-center">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                  </li>
+                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vitals Monitor Section -->
+    <div class="section" id="vitals">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Patient Vitals Monitoring</h2>
+        <div>
+          <button class="btn btn-primary me-2"><i class="fas fa-plus me-2"></i>Add Patient</button>
+          <button class="btn btn-outline-secondary"><i class="fas fa-history me-2"></i>View History</button>
+        </div>
+      </div>
+      
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card vital-card">
+            <div class="card-body text-center">
+              <i class="fas fa-heartbeat text-danger fs-1 mb-3"></i>
+              <h3>72 <small>bpm</small></h3>
+              <p class="mb-0">Heart Rate</p>
+              <small class="text-success"><i class="fas fa-arrow-down me-1"></i> 5% from last reading</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card vital-card">
+            <div class="card-body text-center">
+              <i class="fas fa-tint text-primary fs-1 mb-3"></i>
+              <h3>120/80 <small>mmHg</small></h3>
+              <p class="mb-0">Blood Pressure</p>
+              <small class="text-success"><i class="fas fa-check-circle me-1"></i> Normal</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card vital-card">
+            <div class="card-body text-center">
+              <i class="fas fa-thermometer-half text-warning fs-1 mb-3"></i>
+              <h3>98.6 <small>°F</small></h3>
+              <p class="mb-0">Temperature</p>
+              <small class="text-success"><i class="fas fa-check-circle me-1"></i> Normal</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card vital-card">
+            <div class="card-body text-center">
+              <i class="fas fa-lungs text-info fs-1 mb-3"></i>
+              <h3>98 <small>%</small></h3>
+              <p class="mb-0">Oxygen Saturation</p>
+              <small class="text-warning"><i class="fas fa-exclamation-circle me-1"></i> Slightly low</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Vitals Trend (Last 7 Days)</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <!-- This would be replaced with an actual chart library like Chart.js -->
+                <div style="height: 100%; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; border-radius: 10px;">
+                  <p class="text-muted">Vitals trend chart would display here</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Active Patients</h5>
+            </div>
+            <div class="card-body">
+              <div class="list-group">
+                <div class="list-group-item">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" class="patient-avatar me-3" alt="Patient">
+                    <div>
+                      <h6 class="mb-0">Sarah Johnson</h6>
+                      <small class="text-muted">Monitoring: BP, Heart Rate</small>
+                    </div>
+                    <span class="badge bg-success ms-auto">Stable</span>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/men/75.jpg" class="patient-avatar me-3" alt="Patient">
+                    <div>
+                      <h6 class="mb-0">Thomas Miller</h6>
+                      <small class="text-muted">Monitoring: Oxygen, Temp</small>
+                    </div>
+                    <span class="badge bg-warning ms-auto">Watch</span>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/women/63.jpg" class="patient-avatar me-3" alt="Patient">
+                    <div>
+                      <h6 class="mb-0">Patricia Clark</h6>
+                      <small class="text-muted">Monitoring: All Vitals</small>
+                    </div>
+                    <span class="badge bg-danger ms-auto">Critical</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Detailed Vitals History</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Date/Time</th>
+                  <th>Patient</th>
+                  <th>Heart Rate</th>
+                  <th>Blood Pressure</th>
+                  <th>Temperature</th>
+                  <th>Oxygen</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Mar 10, 10:30 AM</td>
+                  <td>Sarah Johnson</td>
+                  <td>72 bpm</td>
+                  <td>120/80 mmHg</td>
+                  <td>98.6 °F</td>
+                  <td>98%</td>
+                  <td><span class="badge bg-success">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>Mar 10, 9:15 AM</td>
+                  <td>Thomas Miller</td>
+                  <td>85 bpm</td>
+                  <td>135/90 mmHg</td>
+                  <td>99.1 °F</td>
+                  <td>92%</td>
+                  <td><span class="badge bg-warning">Warning</span></td>
+                </tr>
+                <tr>
+                  <td>Mar 10, 8:45 AM</td>
+                  <td>Patricia Clark</td>
+                  <td>110 bpm</td>
+                  <td>150/95 mmHg</td>
+                  <td>100.4 °F</td>
+                  <td>89%</td>
+                  <td><span class="badge bg-danger">Critical</span></td>
+                </tr>
+                <tr>
+                  <td>Mar 9, 4:30 PM</td>
+                  <td>Sarah Johnson</td>
+                  <td>75 bpm</td>
+                  <td>125/82 mmHg</td>
+                  <td>98.4 °F</td>
+                  <td>97%</td>
+                  <td><span class="badge bg-success">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>Mar 9, 2:15 PM</td>
+                  <td>Thomas Miller</td>
+                  <td>82 bpm</td>
+                  <td>130/88 mmHg</td>
+                  <td>98.9 °F</td>
+                  <td>93%</td>
+                  <td><span class="badge bg-warning">Warning</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <nav aria-label="Page navigation" class="mt-3">
+            <ul class="pagination justify-content-center">
+              <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">Previous</a>
+              </li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Doctor Chat Section -->
+    <div class="section" id="chat">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Doctor Chat</h2>
+        <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>New Conversation</button>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Conversations</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="list-group list-group-flush">
+                <div class="list-group-item active">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" class="patient-avatar me-3" alt="Doctor">
+                    <div>
+                      <h6 class="mb-0">Dr. Smith (Cardiology)</h6>
+                      <small>Consultation about patient #PT1004</small>
+                    </div>
+                    <span class="badge bg-danger ms-auto">2</span>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/women/45.jpg" class="patient-avatar me-3" alt="Doctor">
+                    <div>
+                      <h6 class="mb-0">Dr. Lee (Neurology)</h6>
+                      <small>Patient referral</small>
+                    </div>
+                    <span class="badge bg-primary ms-auto">1</span>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/men/65.jpg" class="patient-avatar me-3" alt="Doctor">
+                    <div>
+                      <h6 class="mb-0">Dr. Patel (Radiology)</h6>
+                      <small>Imaging results discussion</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/women/22.jpg" class="patient-avatar me-3" alt="Doctor">
+                    <div>
+                      <h6 class="mb-0">Dr. Garcia (Oncology)</h6>
+                      <small>Treatment plan review</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex align-items-center">
+                    <img src="https://randomuser.me/api/portraits/men/78.jpg" class="patient-avatar me-3" alt="Doctor">
+                    <div>
+                      <h6 class="mb-0">Dr. Wilson (Surgery)</h6>
+                      <small>Pre-op consultation</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" class="patient-avatar me-3" alt="Doctor">
+                <div>
+                  <h5 class="mb-0">Dr. Smith (Cardiology)</h5>
+                  <small class="text-muted">Last seen today at 10:15 AM</small>
+                </div>
+              </div>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-2"><i class="fas fa-phone"></i></button>
+                <button class="btn btn-sm btn-outline-success"><i class="fas fa-video"></i></button>
+              </div>
+            </div>
+            <div class="card-body chat-container" style="height: 400px; overflow-y: auto; background-color: #f5f6f7;">
+              <div class="chat-message received">
+                <div class="message-content">
+                  <div class="message-sender">Dr. Smith</div>
+                  <div class="message-text">Hi Dr. Doe, I wanted to discuss the case of Robert Davis (#PT1004). His recent echocardiogram shows some concerning findings.</div>
+                  <div class="message-time">10:05 AM</div>
+                </div>
+              </div>
+              <div class="chat-message sent">
+                <div class="message-content">
+                  <div class="message-sender">You</div>
+                  <div class="message-text">Yes, I've reviewed his file. His BP has been difficult to control despite multiple medication adjustments.</div>
+                  <div class="message-time">10:08 AM</div>
+                </div>
+              </div>
+              <div class="chat-message received">
+                <div class="message-content">
+                  <div class="message-sender">Dr. Smith</div>
+                  <div class="message-text">The echo shows LV hypertrophy with an ejection fraction of 45%. I'm concerned about possible diastolic dysfunction. Would you like me to see him for a cardiology consult?</div>
+                  <div class="message-time">10:10 AM</div>
+                </div>
+              </div>
+              <div class="chat-message received">
+                <div class="message-content">
+                  <div class="message-sender">Dr. Smith</div>
+                  <div class="message-text">I could see him tomorrow afternoon if that works with his schedule.</div>
+                  <div class="message-time">10:11 AM</div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Type your message...">
+                <button class="btn btn-primary" type="button"><i class="fas fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Telemedicine Section -->
+    <div class="section" id="telemedicine">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Telemedicine</h2>
+        <button class="btn btn-primary"><i class="fas fa-video me-2"></i>Start New Consultation</button>
+      </div>
+      
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <i class="fas fa-video fs-1 text-primary mb-3"></i>
+              <h3>12</h3>
+              <p class="mb-0">Consultations This Month</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <i class="fas fa-user-clock fs-1 text-warning mb-3"></i>
+              <h3>3</h3>
+              <p class="mb-0">Upcoming Appointments</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <i class="fas fa-calendar-check fs-1 text-success mb-3"></i>
+              <h3>87%</h3>
+              <p class="mb-0">Completion Rate</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Upcoming Telemedicine Appointments</h5>
+            </div>
+            <div class="card-body">
+              <div class="list-group">
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1">Sarah Johnson</h6>
+                      <small class="text-muted">Today, 2:30 PM - Follow-up Consultation</small>
+                    </div>
+                    <button class="btn btn-sm btn-primary">Prepare</button>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1">Michael Brown</h6>
+                      <small class="text-muted">Tomorrow, 10:00 AM - New Patient</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary">Details</button>
+                  </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1">Emily Wilson</h6>
+                      <small class="text-muted">Mar 15, 11:30 AM - Routine Checkup</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary">Details</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Recent Consultations</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Patient</th>
+                      <th>Duration</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Mar 10</td>
+                      <td>Robert Davis</td>
+                      <td>25 min</td>
+                      <td><span class="badge bg-success">Completed</span></td>
+                    </tr>
+                    <tr>
+                      <td>Mar 8</td>
+                      <td>Jennifer Lee</td>
+                      <td>18 min</td>
+                      <td><span class="badge bg-success">Completed</span></td>
+                    </tr>
+                    <tr>
+                      <td>Mar 5</td>
+                      <td>Thomas Miller</td>
+                      <td>32 min</td>
+                      <td><span class="badge bg-success">Completed</span></td>
+                    </tr>
+                    <tr>
+                      <td>Mar 3</td>
+                      <td>Patricia Clark</td>
+                      <td>15 min</td>
+                      <td><span class="badge bg-secondary">Cancelled</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-header">
+              <h5 class="mb-0">Start New Consultation</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Select Patient</label>
+                  <select class="form-select">
+                    <option selected>Choose patient...</option>
+                    <option>Sarah Johnson</option>
+                    <option>Michael Brown</option>
+                    <option>Emily Wilson</option>
+                    <option>Robert Davis</option>
+                    <option>Jennifer Lee</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Consultation Type</label>
+                  <select class="form-select">
+                    <option selected>Select type...</option>
+                    <option>Follow-up</option>
+                    <option>New Patient</option>
+                    <option>Routine Checkup</option>
+                    <option>Urgent Care</option>
+                    <option>Post-Op</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Date & Time</label>
+                  <input type="datetime-local" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Notes</label>
+                  <textarea class="form-control" rows="3" placeholder="Any special notes for this consultation..."></textarea>
+                </div>
+                <div class="d-grid gap-2">
+                  <button type="button" class="btn btn-primary">
+                    <i class="fas fa-video me-2"></i>Start Immediate Consultation
+                  </button>
+                  <button type="button" class="btn btn-outline-primary">
+                    <i class="fas fa-calendar-plus me-2"></i>Schedule for Later
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="section" id="settings">
+      <h2 class="mb-4">Account Settings</h2>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <img src="https://randomuser.me/api/portraits/men/32.jpg" class="profile-img mb-3" alt="Doctor">
+              <h4>Dr. John Doe</h4>
+              <p class="text-muted">Cardiologist</p>
+              <button class="btn btn-outline-primary btn-sm">Change Photo</button>
+            </div>
+          </div>
+          
+          <div class="card mt-4">
+            <div class="card-header">
+              <h5 class="mb-0">Quick Links</h5>
+            </div>
+            <div class="list-group list-group-flush">
+              <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-user-shield me-2"></i>Privacy Settings</a>
+              <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-bell me-2"></i>Notification Preferences</a>
+              <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-envelope me-2"></i>Email Settings</a>
+              <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-lock me-2"></i>Security</a>
+              <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-question-circle me-2"></i>Help Center</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                  <a class="nav-link active" href="#profile" data-bs-toggle="tab">Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#security" data-bs-toggle="tab">Security</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#notifications" data-bs-toggle="tab">Notifications</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#preferences" data-bs-toggle="tab">Preferences</a>
+                </li>
+              </ul>
+            </div>
+            <div class="card-body">
+              <div class="tab-content">
+                <div class="tab-pane active" id="profile">
+                  <form>
+                    <div class="row mb-3">
+                      <div class="col-md-6">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" value="John">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" value="Doe">
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Email</label>
+                      <input type="email" class="form-control" value="john.doe@example.com">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Phone</label>
+                      <input type="tel" class="form-control" value="(555) 123-4567">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Specialization</label>
+                      <input type="text" class="form-control" value="Cardiology">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Hospital Affiliation</label>
+                      <input type="text" class="form-control" value="City General Hospital">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Bio</label>
+                      <textarea class="form-control" rows="3">Board-certified cardiologist with 10 years of experience in treating cardiovascular diseases and conditions.</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                  </form>
+                </div>
+                
+                <div class="tab-pane" id="security">
+                  <form>
+                    <div class="mb-3">
+                      <label class="form-label">Current Password</label>
+                      <input type="password" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">New Password</label>
+                      <input type="password" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Confirm New Password</label>
+                      <input type="password" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="twoFactor" checked>
+                        <label class="form-check-label" for="twoFactor">
+                          Enable Two-Factor Authentication
+                        </label>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Security Settings</button>
+                  </form>
+                </div>
+                
+                <div class="tab-pane" id="notifications">
+                  <h5 class="mb-3">Notification Preferences</h5>
+                  <div class="mb-3">
+                    <div class="form-check form-switch mb-2">
+                      <input class="form-check-input" type="checkbox" id="appointmentNotif" checked>
+                      <label class="form-check-label" for="appointmentNotif">Appointment Reminders</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                      <input class="form-check-input" type="checkbox" id="messageNotif" checked>
+                      <label class="form-check-label" for="messageNotif">New Messages</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                      <input class="form-check-input" type="checkbox" id="reportNotif" checked>
+                      <label class="form-check-label" for="reportNotif">Report Ready</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                      <input class="form-check-input" type="checkbox" id="urgentNotif" checked>
+                      <label class="form-check-label" for="urgentNotif">Urgent Alerts</label>
+                    </div>
+                  </div>
+                  <h5 class="mb-3">Notification Methods</h5>
+                  <div class="mb-3">
+                    <div class="form-check mb-2">
+                      <input class="form-check-input" type="checkbox" id="emailNotif" checked>
+                      <label class="form-check-label" for="emailNotif">Email</label>
+                    </div>
+                    <div class="form-check mb-2">
+                      <input class="form-check-input" type="checkbox" id="smsNotif">
+                      <label class="form-check-label" for="smsNotif">SMS</label>
+                    </div>
+                    <div class="form-check mb-2">
+                      <input class="form-check-input" type="checkbox" id="pushNotif" checked>
+                      <label class="form-check-label" for="pushNotif">Push Notifications</label>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Save Preferences</button>
+                </div>
+                
+                <div class="tab-pane" id="preferences">
+                  <h5 class="mb-3">Dashboard Preferences</h5>
+                  <div class="mb-3">
+                    <label class="form-label">Default View</label>
+                    <select class="form-select">
+                      <option selected>Dashboard</option>
+                      <option>Appointments</option>
+                      <option>Patients</option>
+                      <option>Reports</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Theme</label>
+                    <select class="form-select">
+                      <option selected>Light</option>
+                      <option>Dark</option>
+                      <option>System Default</option>
+                    </select>
+                  </div>
+                  <h5 class="mb-3">Clinical Preferences</h5>
+                  <div class="mb-3">
+                    <label class="form-label">Default Note Template</label>
+                    <select class="form-select">
+                      <option selected>Standard SOAP</option>
+                      <option>Comprehensive</option>
+                      <option>Minimal</option>
+                      <option>Cardiology Focused</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="autoSave" checked>
+                      <label class="form-check-label" for="autoSave">
+                        Auto-save notes every 5 minutes
+                      </label>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Save Preferences</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Mobile menu toggle
+    document.querySelector('.menu-btn').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('active');
+    });
+
+    // Section navigation
+    document.querySelectorAll('.sidebar a[data-section]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Hide all sections
+        document.querySelectorAll('.section').forEach(section => {
+          section.classList.remove('active');
+        });
+        
+        // Show selected section
+        const sectionId = this.getAttribute('data-section');
+        document.getElementById(sectionId).classList.add('active');
+        
+        // Update active link in sidebar
+        document.querySelectorAll('.sidebar a').forEach(a => {
+          a.classList.remove('active');
+        });
+        this.classList.add('active');
+        
+        // Close sidebar on mobile
+        if (window.innerWidth < 992) {
+          document.querySelector('.sidebar').classList.remove('active');
+        }
+      });
+    });
+
+    // Card navigation
+    document.querySelectorAll('.card[data-section]').forEach(card => {
+      card.addEventListener('click', function() {
+        const sectionId = this.getAttribute('data-section');
+        
+        // Hide all sections
+        document.querySelectorAll('.section').forEach(section => {
+          section.classList.remove('active');
+        });
+        
+        // Show selected section
+        document.getElementById(sectionId).classList.add('active');
+        
+        // Update active link in sidebar
+        document.querySelectorAll('.sidebar a').forEach(a => {
+          a.classList.remove('active');
+          if (a.getAttribute('data-section') === sectionId) {
+            a.classList.add('active');
+          }
+        });
+      });
+    });
+
+    // Current date and time
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { 
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+      });
+      document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', minute: '2-digit' 
+      });
+    }
+    
+    updateDateTime();
+    setInterval(updateDateTime, 60000); // Update every minute
+
+    // Simulate chart loading animation
+    setTimeout(() => {
+      const chartContainers = document.querySelectorAll('.chart-container');
+      chartContainers.forEach(container => {
+        container.innerHTML = '<canvas id="vitalsChart"></canvas>';
+        // In a real implementation, you would initialize Chart.js here
+      });
+    }, 1000);
+    // --- Configuration ---
+const BASE_URL = 'http://localhost:5000/api'; // Replace with your actual backend URL
+const AUTH_TOKEN_KEY = 'jwtToken';
+const USER_ID_KEY = 'currentUserId'; // Assuming you store the doctor's userId after login
+
+// --- Helper Functions ---
+
+/**
+ * Fetches data from the backend with JWT authentication.
+ * @param {string} url - The API endpoint URL.
+ * @param {object} options - Fetch options (method, headers, body, etc.).
+ * @returns {Promise<object>} - The JSON response from the API.
+ */
+async function fetchWithAuth(url, options = {}) {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers,
+    };
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, { ...options, headers });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        // Handle specific error codes, e.g., 401 for token expiry
+        if (response.status === 401 || response.status === 403) {
+            console.error('Authentication error: Session expired or invalid token.', errorData.message);
+            showMessage('Session expired or invalid token. Please log in again to access full features.', 'danger');
+        }
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+}
+
+/**
+ * Displays a temporary message to the user.
+ * @param {string} message - The message to display.
+ * @param {string} type - 'success' or 'danger' for styling.
+ */
+function showMessage(message, type) {
+    const messageContainer = document.createElement('div');
+    messageContainer.className = `alert alert-${type} alert-dismissible fade show mt-3 animate__animated animate__fadeIn`;
+    messageContainer.setAttribute('role', 'alert');
+    messageContainer.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    document.querySelector('.main-content').prepend(messageContainer); // Or a specific message area
+
+    setTimeout(() => {
+        messageContainer.classList.remove('show');
+        messageContainer.classList.add('animate__fadeOut');
+        messageContainer.addEventListener('animationend', () => messageContainer.remove());
+    }, 5000);
+}
+
+// --- Global Variables (to store fetched data) ---
+let currentDoctorId = null;
+let currentDoctorData = null;
+let allPatients = [];
+let allAppointments = [];
+
+// --- Core Functions ---
+
+/**
+ * Initializes the dashboard by checking authentication and fetching initial data.
+ */
+async function initializeDashboard() {
+    currentDoctorId = localStorage.getItem(USER_ID_KEY);
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+
+    if (!currentDoctorId || !token) {
+        console.warn('No user ID or token found. Dashboard data might not load fully.');
+        showMessage('Authentication required to load full dashboard features. Please log in.', 'danger');
+        return;
+    }
+
+    try {
+        // Fetch current doctor's profile
+        currentDoctorData = await fetchWithAuth(`${BASE_URL}/doctors/${currentDoctorId}`);
+        updateDoctorProfileUI(currentDoctorData);
+
+        // Fetch all patients
+        allPatients = await fetchWithAuth(`${BASE_URL}/patients`); // Assuming /api/patients endpoint
+        populatePatientTables(allPatients);
+
+        // Fetch appointments for the current doctor
+        allAppointments = await fetchWithAuth(`${BASE_URL}/appointments/doctor/${currentDoctorId}`); // Assuming this endpoint
+        populateAppointmentTables(allAppointments);
+
+        // Activate the dashboard section by default
+        document.getElementById('dashboard').classList.add('active');
+        document.querySelector('.sidebar a[data-section="dashboard"]').classList.add('active');
+
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        showMessage(`Failed to load dashboard data: ${error.message}`, 'danger');
+    }
+}
+
+/**
+ * Updates the UI with the fetched doctor's profile data.
+ * @param {object} doctor - The doctor data object.
+ */
+function updateDoctorProfileUI(doctor) {
+    // Dashboard header
+    const doctorNameElement = document.querySelector('.profile-header h2');
+    if (doctorNameElement) doctorNameElement.textContent = `Welcome, Dr. ${doctor.name || 'N/A'}`; // Assuming 'name' comes from populated userId
+    
+    const specializationElement = document.querySelector('.profile-header p:nth-child(2)');
+    if (specializationElement) specializationElement.innerHTML = `<i class="fas fa-briefcase-medical me-2"></i>${doctor.specialization || 'N/A'} | ${doctor.experience || 'N/A'} Years Experience`;
+
+    const clinicAddressElement = document.querySelector('.profile-header p:nth-child(3)');
+    if (clinicAddressElement) clinicAddressElement.innerHTML = `<i class="fas fa-hospital me-2"></i>${doctor.clinicAddress || 'N/A'}`;
+
+    const profileImgElement = document.querySelector('.profile-img');
+    if (profileImgElement && doctor.avatar) {
+        profileImgElement.src = doctor.avatar;
+    }
+
+    // Settings section - Profile tab
+    // These inputs are likely for the form. Ensure your HTML has these names.
+    // Assuming 'name' from backend is 'First Last', splitting it
+    const nameParts = (doctor.name || '').split(' ');
+    document.querySelector('#profile input[name="firstName"]').value = nameParts[0] || '';
+    document.querySelector('#profile input[name="lastName"]').value = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+    document.querySelector('#profile input[name="email"]').value = doctor.email || ''; // Assuming email is populated from userId
+    document.querySelector('#profile input[name="phone"]').value = doctor.contactNo || '';
+    document.querySelector('#profile input[name="specialization"]').value = doctor.specialization || '';
+    document.querySelector('#profile input[name="hospitalAffiliation"]').value = doctor.clinicAddress || ''; // Mapping
+    document.querySelector('#profile textarea[name="bio"]').value = doctor.bio || ''; // Assuming a 'bio' field
+}
+
+/**
+ * Populates the patient tables in the dashboard and patients section.
+ * @param {Array<object>} patients - Array of patient data.
+ */
+function populatePatientTables(patients) {
+    // Dashboard - Recent Patients
+    const recentPatientsTableBody = document.querySelector('#dashboard .card .table-responsive tbody');
+    if (recentPatientsTableBody) {
+        recentPatientsTableBody.innerHTML = ''; // Clear existing
+        patients.slice(0, 3).forEach(patient => { // Show first 3 for dashboard
+            const row = `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="${patient.avatar || 'https://placehold.co/40x40/cccccc/ffffff?text=P'}" class="patient-avatar me-2" alt="Patient">
+                            <div>${patient.name || 'N/A'}</div>
+                        </div>
+                    </td>
+                    <td>${patient.lastVisit || 'N/A'}</td>
+                    <td><span class="badge bg-success">${patient.status || 'Active'}</span></td>
+                    <td><button class="btn btn-sm btn-outline-primary view-patient-btn" data-patient-id="${patient._id}">View</button></td>
+                </tr>
+            `;
+            recentPatientsTableBody.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    // Patients Section - Patient Management Table
+    const patientManagementTableBody = document.querySelector('#patients .card .table-responsive tbody');
+    if (patientManagementTableBody) {
+        patientManagementTableBody.innerHTML = ''; // Clear existing
+        patients.forEach(patient => {
+            const row = `
+                <tr>
+                    <td>#PT${patient.patientId || 'N/A'}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="${patient.avatar || 'https://placehold.co/40x40/cccccc/ffffff?text=P'}" class="patient-avatar me-2" alt="Patient">
+                            <div>${patient.name || 'N/A'}</div>
+                        </div>
+                    </td>
+                    <td>${patient.age || 'N/A'}</td>
+                    <td>${patient.gender || 'N/A'}</td>
+                    <td>${patient.lastVisit || 'N/A'}</td>
+                    <td>${patient.condition || 'N/A'}</td>
+                    <td><span class="badge bg-success">${patient.status || 'Active'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1 view-patient-btn" data-patient-id="${patient._id}"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-sm btn-outline-secondary edit-patient-btn" data-patient-id="${patient._id}"><i class="fas fa-edit"></i></button>
+                    </td>
+                </tr>
+            `;
+            patientManagementTableBody.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    // Update patient counts (mock for now, or fetch specific counts if backend provides)
+    document.querySelector('#patients .col-md-3:nth-child(1) h3').textContent = patients.length;
+    // You'd need backend endpoints for 'New This Month', 'Follow-up Needed', 'Critical Condition'
+    // For now, these remain static or require specific logic.
+}
+
+/**
+ * Populates the appointment tables in the dashboard and appointments section.
+ * @param {Array<object>} appointments - Array of appointment data.
+ */
+function populateAppointmentTables(appointments) {
+    // Dashboard - Upcoming Appointments
+    const upcomingAppointmentsList = document.querySelector('#dashboard .list-group');
+    if (upcomingAppointmentsList) {
+        upcomingAppointmentsList.innerHTML = '';
+        appointments.slice(0, 3).forEach(appt => { // Show first 3
+            const row = `
+                <div class="list-group-item border-0 py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="${appt.patientAvatar || 'https://placehold.co/40x40/cccccc/ffffff?text=P'}" class="patient-avatar me-3" alt="Patient">
+                            <div>
+                                <h6 class="mb-0">${appt.patientName || 'N/A'}</h6>
+                                <small class="text-muted">${appt.type || 'N/A'} Consultation</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge bg-light text-dark"><i class="fas fa-clock me-1"></i> ${appt.time || 'N/A'}</div>
+                            <div class="text-muted small mt-1">${appt.date || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            upcomingAppointmentsList.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    // Appointments Section - Today's Schedule
+    const todaysScheduleTableBody = document.querySelector('#appointments .card .table-bordered tbody');
+    if (todaysScheduleTableBody) {
+        todaysScheduleTableBody.innerHTML = '';
+        // Filter appointments for today (you'd need a date comparison logic here)
+        const today = new Date().toISOString().split('T')[0]; //YYYY-MM-DD
+        const todaysAppts = appointments.filter(appt => appt.date === today); // Assuming appt.date is 'YYYY-MM-DD'
+
+        todaysAppts.forEach(appt => {
+            const row = `
+                <tr>
+                    <td>${appt.time || 'N/A'}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="${appt.patientAvatar || 'https://placehold.co/40x40/cccccc/ffffff?text=P'}" class="patient-avatar me-2" alt="Patient">
+                            <div>${appt.patientName || 'N/A'}</div>
+                        </div>
+                    </td>
+                    <td>${appt.type || 'N/A'}</td>
+                    <td><span class="badge bg-secondary">${appt.status || 'Scheduled'}</span></td>
+                    <td><button class="btn btn-sm btn-outline-primary">View</button></td>
+                </tr>
+            `;
+            todaysScheduleTableBody.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    // Populate Upcoming (5) and Pending (3) cards in Appointments section
+    const upcomingCount = appointments.filter(appt => appt.status === 'Scheduled' || appt.status === 'In Progress').length;
+    const pendingCount = appointments.filter(appt => appt.status === 'Pending').length; // Assuming a 'Pending' status for new requests
+
+    document.querySelector('#appointments .card-header.bg-primary h5').textContent = `Upcoming (${upcomingCount})`;
+    document.querySelector('#appointments .card-header.bg-warning h5').textContent = `Pending (${pendingCount})`;
+
+    // Populate the lists under Upcoming and Pending cards
+    const upcomingCardList = document.querySelector('#appointments .card .card-header.bg-primary + .card-body .list-group');
+    if (upcomingCardList) {
+        upcomingCardList.innerHTML = '';
+        appointments.filter(appt => appt.status === 'Scheduled' || appt.status === 'In Progress').forEach(appt => {
+            const item = `
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">${appt.patientName || 'N/A'}</h6>
+                            <small class="text-muted">${appt.time || 'N/A'} - ${appt.endTime || 'N/A'}</small>
+                        </div>
+                        <span class="badge badge-appointment">${appt.type || 'N/A'}</span>
+                    </div>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-primary me-1 start-appt-btn" data-appt-id="${appt._id}">Start</button>
+                        <button class="btn btn-sm btn-outline-secondary me-1 reschedule-appt-btn" data-appt-id="${appt._id}">Reschedule</button>
+                        <button class="btn btn-sm btn-outline-danger cancel-appt-btn" data-appt-id="${appt._id}">Cancel</button>
+                    </div>
+                </div>
+            `;
+            upcomingCardList.insertAdjacentHTML('beforeend', item);
+        });
+    }
+
+    const pendingCardList = document.querySelector('#appointments .card .card-header.bg-warning + .card-body .list-group');
+    if (pendingCardList) {
+        pendingCardList.innerHTML = '';
+        appointments.filter(appt => appt.status === 'Pending').forEach(appt => {
+            const item = `
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">${appt.patientName || 'N/A'}</h6>
+                            <small class="text-muted">${appt.date || 'N/A'}, ${appt.time || 'N/A'}</small>
+                        </div>
+                        <span class="badge badge-followup">${appt.type || 'N/A'}</span>
+                    </div>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-success me-1 confirm-appt-btn" data-appt-id="${appt._id}">Confirm</button>
+                        <button class="btn btn-sm btn-outline-secondary me-1 reschedule-appt-btn" data-appt-id="${appt._id}">Reschedule</button>
+                        <button class="btn btn-sm btn-outline-danger reject-appt-btn" data-appt-id="${appt._id}">Reject</button>
+                    </div>
+                </div>
+            `;
+            pendingCardList.insertAdjacentHTML('beforeend', item);
+        });
+    }
+}
+
+
+// --- Event Listeners and Form Submissions ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Mobile menu toggle
+    document.querySelector('.menu-btn').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('active');
+    });
+
+    // Section navigation for sidebar links
+    document.querySelectorAll('.sidebar a[data-section]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Hide all sections
+        document.querySelectorAll('.section').forEach(section => {
+          section.classList.remove('active');
+        });
+        
+        // Show selected section
+        const sectionId = this.getAttribute('data-section');
+        document.getElementById(sectionId).classList.add('active');
+        
+        // Update active link in sidebar
+        document.querySelectorAll('.sidebar a').forEach(a => {
+          a.classList.remove('active');
+        });
+        this.classList.add('active');
+        
+        // Close sidebar on mobile
+        if (window.innerWidth < 992) {
+          document.querySelector('.sidebar').classList.remove('active');
+        }
+      });
+    });
+
+    // Card navigation for dashboard cards
+    document.querySelectorAll('.card[data-section]').forEach(card => {
+      card.addEventListener('click', function() {
+        const sectionId = this.getAttribute('data-section');
+        
+        // Hide all sections
+        document.querySelectorAll('.section').forEach(section => {
+          section.classList.remove('active');
+        });
+        
+        // Show selected section
+        document.getElementById(sectionId).classList.add('active');
+        
+        // Update active link in sidebar
+        document.querySelectorAll('.sidebar a').forEach(a => {
+          a.classList.remove('active');
+          if (a.getAttribute('data-section') === sectionId) {
+            a.classList.add('active');
+          }
+        });
+      });
+    });
+
+    // Current date and time (existing logic)
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { 
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+      });
+      document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', minute: '2-digit' 
+      });
+    }
+    
+    updateDateTime();
+    setInterval(updateDateTime, 60000); // Update every minute
+
+    // Simulate chart loading animation (existing logic)
+    setTimeout(() => {
+      const chartContainers = document.querySelectorAll('.chart-container');
+      chartContainers.forEach(container => {
+        container.innerHTML = '<canvas id="vitalsChart"></canvas>';
+        // In a real implementation, you would initialize Chart.js here with fetched data
+      });
+    }, 1000);
+
+    // --- Backend Integration Event Listeners ---
+
+    // Logout functionality
+    document.querySelector('a[href="#logout"]').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        localStorage.removeItem(USER_ID_KEY);
+        showMessage('You have been logged out.', 'success'); // Changed from alert to showMessage
+        window.location.href = 'home.html'; // Redirect to home page
+    });
+
+    // Handle Update Profile form submission in Settings
+    const updateProfileForm = document.querySelector('#profile form');
+    if (updateProfileForm) {
+        updateProfileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const updateData = {
+                // Ensure your HTML input fields have 'name' attributes like 'firstName', 'lastName', etc.
+                name: `${formData.get('firstName')} ${formData.get('lastName')}`, // Assuming name is combined
+                email: formData.get('email'),
+                contactNo: formData.get('phone'),
+                specialization: formData.get('specialization'),
+                clinicAddress: formData.get('hospitalAffiliation'), // Mapping hospital affiliation to clinicAddress
+                bio: formData.get('bio')
+                // Add other fields as needed, matching your backend model
+            };
+
+            try {
+                const response = await fetchWithAuth(`${BASE_URL}/doctors/${currentDoctorId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(updateData)
+                });
+                showMessage('Profile updated successfully!', 'success');
+                // Re-fetch doctor data to update UI instantly
+                currentDoctorData = await fetchWithAuth(`${BASE_URL}/doctors/${currentDoctorId}`);
+                updateDoctorProfileUI(currentDoctorData);
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showMessage(`Failed to update profile: ${error.message}`, 'danger');
+            }
+        });
+    }
+
+    // Handle Change Photo (Avatar Upload)
+    const changePhotoBtn = document.querySelector('#settings .card-body .btn-outline-primary');
+    if (changePhotoBtn) {
+        changePhotoBtn.addEventListener('click', () => {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('avatar', file); // 'avatar' must match the field name in your multer config
+
+                    try {
+                        // Assuming currentDoctorData._id is available for the avatar upload route
+                        const doctorMongoId = currentDoctorData ? currentDoctorData._id : null;
+                        if (!doctorMongoId) {
+                            showMessage('Doctor ID not found for avatar upload.', 'danger');
+                            return;
+                        }
+
+                        const response = await fetchWithAuth(`${BASE_URL}/doctors/avatar/${doctorMongoId}`, {
+                            method: 'POST',
+                            headers: {
+                                // Content-Type is NOT set for FormData; browser handles it
+                                'Content-Type': undefined // Explicitly set to undefined
+                            },
+                            body: formData
+                        });
+                        showMessage('Avatar uploaded successfully!', 'success');
+                        // Update avatar image on UI
+                        if (response.avatarUrl) {
+                            document.querySelector('.profile-img').src = response.avatarUrl;
+                            document.querySelector('#settings .profile-img').src = response.avatarUrl;
+                        }
+                    } catch (error) {
+                        console.error('Error uploading avatar:', error);
+                        showMessage(`Failed to upload avatar: ${error.message}`, 'danger');
+                    }
+                }
+            };
+            fileInput.click();
+        });
+    }
+
+    // Handle "Add New Patient" button click
+    const addNewPatientBtn = document.querySelector('#patients .btn-primary');
+    if (addNewPatientBtn) {
+        addNewPatientBtn.addEventListener('click', async () => {
+            window.location.href = 'patient-profile.html';
+        });
+    }
+
+    // Handle "New Appointment" button click
+    const newAppointmentBtn = document.querySelector('#appointments .btn-primary');
+    if (newAppointmentBtn) {
+        newAppointmentBtn.addEventListener('click', () => {
+            window.location.href = 'appointment.html';
+        });
+    }
+
+    // Handle "New Patient" quick action button
+    const quickActionNewPatientBtn = document.querySelector('#dashboard .row.g-3 .col-md-2:nth-child(1) button');
+    if (quickActionNewPatientBtn) {
+        quickActionNewPatientBtn.addEventListener('click', () => {
+            window.location.href = 'patient-profile.html';
+        });
+    }
+
+    // Handle "New Appointment" quick action button
+    const quickActionNewAppointmentBtn = document.querySelector('#dashboard .row.g-3 .col-md-2:nth-child(2) button');
+    if (quickActionNewAppointmentBtn) {
+        quickActionNewAppointmentBtn.addEventListener('click', () => {
+            window.location.href = 'appointment.html';
+        });
+    }
+
+    // Handle "Generate Report" quick action button
+    const quickActionGenerateReportBtn = document.querySelector('#dashboard .row.g-3 .col-md-2:nth-child(4) button');
+    if (quickActionGenerateReportBtn) {
+        quickActionGenerateReportBtn.addEventListener('click', () => {
+            window.location.href = 'report.html';
+        });
+    }
+
+    // --- Client-side Patient Search (basic example) ---
+    const patientSearchInput = document.querySelector('#patients .search-box input');
+    if (patientSearchInput) {
+        patientSearchInput.addEventListener('keyup', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredPatients = allPatients.filter(patient =>
+                (patient.name && patient.name.toLowerCase().includes(searchTerm)) ||
+                (patient.patientId && patient.patientId.toLowerCase().includes(searchTerm)) ||
+                (patient.condition && patient.condition.toLowerCase().includes(searchTerm))
+            );
+            populatePatientTables(filteredPatients); // Re-render table with filtered data
+        });
+    }
+
+    // Handle "Generate New Report" button in Reports section
+    const generateReportBtnInSection = document.getElementById('generateNewReportBtn');
+    if (generateReportBtnInSection) {
+        generateReportBtnInSection.addEventListener('click', () => {
+            window.location.href = 'report.html';
+        });
+    }
+    
+
+
+    // --- Initial Dashboard Load ---
+    initializeDashboard();
+});
+
+// The existing updateDateTime() and chart simulation logic from the HTML
+// are already properly handled inside the DOMContentLoaded listener.
+
+
+  </script>
+</body>
+
+</html>

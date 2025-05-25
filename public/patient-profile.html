@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enhanced Patient Registration | Hospital Copilot</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Animate.css -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-section {
+      margin-bottom: 25px;
+    }
+
+    .form-section h5 {
+      font-weight: 600;
+      border-bottom: 2px solid #0072ff;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-primary, .btn-secondary {
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover, .btn-secondary:hover {
+      transform: scale(1.05);
+    }
+
+    .navbar {
+      margin-bottom: 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand animate__animated animate__fadeInLeft" href="#">Hospital Copilot</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse animate__animated animate__fadeInRight" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Register</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Appointments</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contact</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container animate__animated animate__fadeInDown">
+  <h2 class="text-center mb-4">Enhanced Patient Registration Form</h2>
+  <form id="patientForm">
+
+    <div class="form-section">
+      <h5>Basic Information</h5>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" class="form-control" id="dob" required />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Gender</label>
+          <select class="form-select" id="gender" required>
+            <option selected disabled value="">Choose...</option>
+            <option>male</option>
+            <option>female</option>
+            <option>other</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Blood Type</label>
+          <select class="form-select" id="bloodType" required>
+            <option selected disabled value="">Select</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Contact No.</label>
+          <input type="tel" class="form-control" id="contactNo" required />
+        </div>
+        <div class="col-12">
+          <label class="form-label">Address</label>
+          <textarea class="form-control" id="address" rows="2" required></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h5>Profile Photo</h5>
+      <input type="file" class="form-control" accept="image/*" id="profilePhoto" required />
+    </div>
+
+    <div class="form-section">
+      <h5>Medical History</h5>
+      <div id="medicalHistoryContainer"></div>
+      <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addMedicalHistory()">+ Add History</button>
+    </div>
+
+    <div class="form-section">
+      <h5>Current Medications</h5>
+      <div id="medicineContainer"></div>
+      <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addMedicine()">+ Add Medicine</button>
+    </div>
+
+    <div class="form-section">
+      <h5>Allergies</h5>
+      <input type="text" class="form-control" id="allergies" />
+    </div>
+
+    <div class="form-section">
+      <h5>Upload Previous Medical Reports</h5>
+      <input type="file" class="form-control" accept=".pdf,image/*" id="reportsUpload" multiple />
+    </div>
+
+    <div class="form-section">
+      <h5>Location</h5>
+      <input type="text" class="form-control" id="locationInput" placeholder="Enter your city or area" />
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Submit Patient Info</button>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  let medCount = 0, histCount = 0;
+
+  function addMedicine() {
+    medCount++;
+    const container = document.getElementById('medicineContainer');
+    const html = `
+      <div class="row g-2 mb-2">
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Medicine Name" required>
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Dosage" required>
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Frequency" required>
+        </div>
+      </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+  }
+
+  function addMedicalHistory() {
+    histCount++;
+    const container = document.getElementById('medicalHistoryContainer');
+    const html = `
+      <div class="row g-2 mb-2">
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Condition" required>
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Treatment" required>
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Doctor's Notes">
+        </div>
+      </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+  }
+
+  document.getElementById('patientForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const dob = document.getElementById('dob').value;
+    const profilePhoto = document.getElementById('profilePhoto').files[0];
+    const reports = document.getElementById('reportsUpload').files;
+    const location = document.getElementById('locationInput').value;
+
+    let summary = `\n✅ Registration Summary:\n` +
+                  `🗖 DOB: ${dob}\n` +
+                  `📍 Location: ${location || "Not Provided"}\n` +
+                  `🖼️ Photo Uploaded: ${profilePhoto ? profilePhoto.name : "No"}\n` +
+                  `📄 Reports Uploaded: ${reports.length}`;
+
+    alert(summary);
+    this.reset();
+    document.getElementById('medicineContainer').innerHTML = '';
+    document.getElementById('medicalHistoryContainer').innerHTML = '';
+  });
+</script>
+
+</body>
+</html>

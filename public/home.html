@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediCare Hospital | Advanced Healthcare Solutions</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { 
+      scroll-behavior: smooth; 
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      font-family: 'Poppins', sans-serif;
+      color: #333;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      padding: 15px 0;
+    }
+    
+    .navbar.scrolled {
+      padding: 10px 0;
+      background: rgba(255, 255, 255, 0.98) !important;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      color: #0d6efd !important;
+      font-size: 1.5rem;
+    }
+    
+    .nav-link {
+      font-weight: 500;
+      color: #333 !important;
+      margin: 0 8px;
+      position: relative;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background: #0d6efd;
+      bottom: 0;
+      left: 0;
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    
+    .btn-appointment {
+      background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+      color: white !important;
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .btn-appointment:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      padding: 0 15px;
+      background: linear-gradient(rgba(0, 0, 0, 0.644), rgba(0, 0, 0, 0.7)), 
+                  url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center/cover;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: fadeInUp 1s forwards 0.3s;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      margin-bottom: 30px;
+      opacity: 0;
+      animation: fadeIn 1.5s forwards 0.8s;
+    }
+
+    .btn-main {
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      margin-top: 20px;
+      background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+      color: #fff;
+      border: none;
+      transition: all 0.4s ease;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+      opacity: 0;
+      animation: fadeIn 1s forwards 1.2s;
+    }
+
+    .btn-main:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(13, 110, 253, 0.5);
+    }
+
+    /* Floating elements */
+    .floating-elements {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      overflow: hidden;
+    }
+    
+    .floating-element {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+      }
+    }
+
+    /* Sections */
+    section {
+      padding: 100px 0;
+    }
+    
+    .section-title {
+      font-weight: 700;
+      color: #0d6efd;
+      margin-bottom: 15px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 3px;
+      background: linear-gradient(90deg, #0d6efd, transparent);
+      bottom: -8px;
+      left: 0;
+    }
+    
+    .section-subtitle {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 50px;
+    }
+
+    /* Features */
+    .feature-card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      transition: all 0.4s ease;
+      height: 100%;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    
+    .feature-card.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px) !important;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-icon {
+      transform: scale(1.2);
+    }
+    
+    .feature-title {
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    
+    .feature-text {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    /* Stats */
+    .stats-section {
+      background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+      color: white;
+      padding: 80px 0;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .stat-label {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* Doctors */
+    .doctor-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      transition: all 0.4s ease;
+      margin-bottom: 30px;
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    
+    .doctor-card.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .doctor-card:hover {
+      transform: translateY(-10px) !important;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .doctor-img {
+      height: 300px;
+      width: 100%;
+      object-fit: cover;
+    }
+    
+    .doctor-info {
+      padding: 25px;
+    }
+    
+    .doctor-name {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .doctor-specialty {
+      color: #0d6efd;
+      font-weight: 500;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+    
+    .doctor-bio {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .social-links a {
+      color: #666;
+      transition: all 0.3s ease;
+    }
+    
+    .social-links a:hover {
+      color: #0d6efd;
+      transform: translateY(-3px);
+    }
+
+    /* Testimonials */
+    .testimonial-section {
+      background: #f8f9fa;
+    }
+    
+    .testimonial-card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+      margin: 15px;
+      position: relative;
+      transform: scale(0.95);
+      opacity: 0;
+      transition: all 0.4s ease;
+    }
+    
+    .testimonial-card.show {
+      transform: scale(1);
+      opacity: 1;
+    }
+    
+    .testimonial-card::before {
+      content: '\201C';
+      font-family: Georgia, serif;
+      font-size: 4rem;
+      color: rgba(13, 110, 253, 0.1);
+      position: absolute;
+      top: 10px;
+      left: 20px;
+    }
+    
+    .testimonial-text {
+      font-style: italic;
+      color: #555;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+    }
+    
+    .author-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+    
+    .author-info h5 {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    
+    .author-info p {
+      color: #666;
+      font-size: 0.8rem;
+    }
+
+    /* Contact Form */
+    .contact-form {
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-control {
+      height: 50px;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      padding-left: 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    textarea.form-control {
+      height: auto;
+      padding-top: 15px;
+    }
+    
+    .contact-info {
+      background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+      border-radius: 15px;
+      padding: 40px;
+      color: white;
+      height: 100%;
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 25px;
+    }
+    
+    .contact-icon {
+      font-size: 1.5rem;
+      margin-right: 15px;
+      margin-top: 5px;
+    }
+    
+    .contact-text h5 {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .contact-text p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+
+    /* Footer */
+    .footer {
+      background: #1a1a1a;
+      color: #ccc;
+      padding: 80px 0 30px;
+    }
+    
+    .footer-logo {
+      font-weight: 700;
+      color: white;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+    
+    .footer-about {
+      margin-bottom: 20px;
+    }
+    
+    .footer-links h4 {
+      color: white;
+      font-weight: 600;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+    
+    .footer-links ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+    
+    .footer-links a {
+      color: #aaa;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+      padding-left: 5px;
+    }
+    
+    .social-icons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .social-icons a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .social-icons a:hover {
+      background: #0d6efd;
+      transform: translateY(-3px);
+    }
+    
+    .copyright {
+      border-top: 1px solid #333;
+      padding-top: 20px;
+      margin-top: 50px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    .delay-1 {
+      animation-delay: 0.2s;
+    }
+    
+    .delay-2 {
+      animation-delay: 0.4s;
+    }
+    
+    .delay-3 {
+      animation-delay: 0.6s;
+    }
+    
+    .delay-4 {
+      animation-delay: 0.8s;
+    }
+
+    /* Responsive */
+    @media(max-width: 992px) {
+      .hero h1 {
+        font-size: 2.8rem;
+      }
+      
+      section {
+        padding: 70px 0;
+      }
+    }
+    
+    @media(max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      
+      .hero p {
+        font-size: 1.1rem;
+      }
+      
+      .section-title {
+        font-size: 1.8rem;
+      }
+      
+      .section-subtitle {
+        font-size: 1rem;
+      }
+    }
+    
+    @media(max-width: 576px) {
+      .hero {
+        height: 90vh;
+      }
+      
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      
+      .btn-main {
+        padding: 10px 25px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="https://cdn-icons-png.flaticon.com/512/2967/2967393.png" alt="MediCare Hospital Logo" width="40" height="40" class="me-2">
+        MediCare Hospital
+      </a>
+      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="#doctors">Doctors</a></li>
+          <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+        <div class="d-flex ms-lg-3 mt-3 mt-lg-0">
+          <a href="user.html" class="btn btn-appointment" >Login</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="floating-elements">
+      <div class="floating-element" style="width: 30px; height: 30px; top: 10%; left: 10%;"></div>
+      <div class="floating-element" style="width: 50px; height: 50px; top: 20%; left: 80%;"></div>
+      <div class="floating-element" style="width: 40px; height: 40px; top: 70%; left: 15%;"></div>
+      <div class="floating-element" style="width: 25px; height: 25px; top: 80%; left: 70%;"></div>
+      <div class="floating-element" style="width: 60px; height: 60px; top: 30%; left: 50%;"></div>
+    </div>
+    <div class="hero-content container">
+      <h1>Advanced Healthcare With Compassion</h1>
+      <p>MediCare Hospital provides world-class medical services with cutting-edge technology and a patient-centered approach</p>
+      <div class="d-flex justify-content-center gap-3">
+        <a href="#contact" class="btn btn-main">Contact Us</a>
+        <a href="#services" class="btn btn-main btn-outline-light">Our Services</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="bg-light">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Hospital Building" class="img-fluid rounded-3 shadow">
+        </div>
+        <div class="col-lg-6">
+          <span class="section-title">About MediCare</span>
+          <h2 class="mb-4">We Provide The Best Healthcare Services</h2>
+          <p class="mb-4">Founded in 1995, MediCare Hospital has grown to become a leading healthcare provider in the region. Our state-of-the-art facility is equipped with the latest medical technology and staffed by highly skilled professionals.</p>
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <div class="d-flex">
+                <i class="fas fa-check-circle text-primary me-3 mt-1"></i>
+                <div>
+                  <h5 class="mb-2">24/7 Emergency</h5>
+                  <p class="text-muted">Round-the-clock emergency care with rapid response teams.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div class="d-flex">
+                <i class="fas fa-check-circle text-primary me-3 mt-1"></i>
+                <div>
+                  <h5 class="mb-2">Qualified Doctors</h5>
+                  <p class="text-muted">Board-certified specialists across all major medical fields.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div class="d-flex">
+                <i class="fas fa-check-circle text-primary me-3 mt-1"></i>
+                <div>
+                  <h5 class="mb-2">Modern Equipment</h5>
+                  <p class="text-muted">Cutting-edge diagnostic and treatment technology.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div class="d-flex">
+                <i class="fas fa-check-circle text-primary me-3 mt-1"></i>
+                <div>
+                  <h5 class="mb-2">Patient Care</h5>
+                  <p class="text-muted">Compassionate, personalized care for all patients.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a href="#" class="btn btn-primary">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="section-title">Our Services</span>
+        <h2 class="mb-3">Comprehensive Healthcare Solutions</h2>
+        <p class="section-subtitle">We offer a wide range of medical services to meet all your healthcare needs</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <i class="fas fa-heartbeat feature-icon"></i>
+            <h4 class="feature-title">Cardiology</h4>
+            <p class="feature-text">Advanced heart care with non-invasive diagnostics, angioplasty, and cardiac rehabilitation programs.</p>
+            <a href="#" class="text-primary text-decoration-none">Learn More <i class="fas fa-arrow-right ms-2"></i></a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <i class="fas fa-brain feature-icon"></i>
+            <h4 class="feature-title">Neurology</h4>
+            <p class="feature-text">Specialized care for brain and nervous system disorders including stroke management.</p>
+            <a href="#" class="text-primary text-decoration-none">Learn More <i class="fas fa-arrow-right ms-2"></i></a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <i class="fas fa-bone feature-icon"></i>
+            <h4 class="feature-title">Orthopedics</h4>
+            <p class="feature-text">Comprehensive bone and joint care including joint replacement and sports medicine.</p>
+            <a href="#" class="text-primary text-decoration-none">Learn More <i class="fas fa-arrow-right ms-2"></i></a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <i class="fas fa-baby feature-icon"></i>
+            <h4 class="feature-title">Pediatrics</h4>
+            <p class="feature-text">Specialized healthcare for infants, children, and adolescents in a child-friendly environment.</p>
+            <a href="#" class="text-primary text-decoration-none">Learn More <i class="fas fa-arrow-right ms-2"></i></a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <i class="fas fa-x-ray feature-icon"></i>
+            <h4 class="feature-title">Radiology</h4>
+            <p class="feature-text">Advanced imaging services including MRI, CT scans, ultrasound, and digital X-rays.</p>
+            <a href="#" class="text-primary text-decoration-none">Learn More <i class="fas fa-arrow-right ms-2"></i></a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <i class="fas fa-procedures feature-icon"></i>
+            <h4 class="feature-title">General Surgery</h4>
+            <p class="feature-text">Minimally invasive surgical procedures with faster recovery times and less discomfort.</p>
+            <a href="#" class="text-primary text-decoration-none">Learn More <i class="fas fa-arrow-right ms-2"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-5">
+        <a href="#" class="btn btn-outline-primary px-4">View All Services</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-6 col-md-3">
+          <div class="stat-item">
+            <div class="stat-number">250+</div>
+            <div class="stat-label">Expert Doctors</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Medical Departments</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item">
+            <div class="stat-number">10,000+</div>
+            <div class="stat-label">Happy Patients</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Emergency Services</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Doctors Section -->
+  <section id="doctors" class="bg-light">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="section-title">Our Specialists</span>
+        <h2 class="mb-3">Meet Our Expert Doctors</h2>
+        <p class="section-subtitle">Our team of highly qualified professionals is dedicated to your health and well-being</p>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-lg-3">
+          <div class="doctor-card">
+            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Dr. Sarah Johnson" class="doctor-img">
+            <div class="doctor-info">
+              <h5 class="doctor-name">Dr. Sarah Johnson</h5>
+              <p class="doctor-specialty">Cardiologist</p>
+              <p class="doctor-bio">With over 15 years of experience in interventional cardiology.</p>
+              <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="doctor-card">
+            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80" alt="Dr. Michael Chen" class="doctor-img">
+            <div class="doctor-info">
+              <h5 class="doctor-name">Dr. Michael Chen</h5>
+              <p class="doctor-specialty">Neurologist</p>
+              <p class="doctor-bio">Specializing in stroke prevention and treatment protocols.</p>
+              <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="doctor-card">
+            <img src="https://images.unsplash.com/photo-1651008376811-b90baee60c1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Dr. Priya Patel" class="doctor-img">
+            <div class="doctor-info">
+              <h5 class="doctor-name">Dr. Priya Patel</h5>
+              <p class="doctor-specialty">Pediatrician</p>
+              <p class="doctor-bio">Dedicated to children's health with a gentle, caring approach.</p>
+              <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="doctor-card">
+            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80" alt="Dr. Robert Williams" class="doctor-img">
+            <div class="doctor-info">
+              <h5 class="doctor-name">Dr. Robert Williams</h5>
+              <p class="doctor-specialty">Orthopedic Surgeon</p>
+              <p class="doctor-bio">Expert in minimally invasive joint replacement surgeries.</p>
+              <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-5">
+        <a href="#" class="btn btn-primary px-4">View All Doctors</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="testimonial-section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="section-title">Patient Stories</span>
+        <h2 class="mb-3">What Our Patients Say</h2>
+        <p class="section-subtitle">Hear from people who have experienced our care firsthand</p>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="testimonial-card">
+            <p class="testimonial-text">"The care I received at MediCare Hospital was exceptional. The doctors took time to explain everything and the nursing staff was incredibly attentive."</p>
+            <div class="testimonial-author">
+              <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Jennifer Smith" class="author-img">
+              <div class="author-info">
+                <h5>Jennifer Smith</h5>
+                <p>Cardiac Patient</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="testimonial-card">
+            <p class="testimonial-text">"After my knee replacement surgery, the physical therapy team helped me regain full mobility. I'm now back to playing tennis pain-free!"</p>
+            <div class="testimonial-author">
+              <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="David Johnson" class="author-img">
+              <div class="author-info">
+                <h5>David Johnson</h5>
+                <p>Orthopedic Patient</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="testimonial-card">
+            <p class="testimonial-text">"The pediatric team made my daughter feel comfortable during her treatment. They have a wonderful way with children and excellent medical skills."</p>
+            <div class="testimonial-author">
+              <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Maria Garcia" class="author-img">
+              <div class="author-info">
+                <h5>Maria Garcia</h5>
+                <p>Parent of Pediatric Patient</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Appointment CTA -->
+  <section class="bg-primary text-white">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h3 class="mb-3">Ready to Schedule Your Appointment?</h3>
+          <p class="mb-lg-0">Our team is standing by to provide you with exceptional care. Book your visit today.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="#" class="btn btn-light btn-lg px-4">Book Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="section-title">Get In Touch</span>
+        <h2 class="mb-3">Contact Us</h2>
+        <p class="section-subtitle">We're here to answer your questions and address your healthcare needs</p>
+      </div>
+      <div class="row">
+        <div class="col-lg-7 mb-5 mb-lg-0">
+          <div class="contact-form">
+            <form id="contactForm">
+              <div class="row">
+                <div class="col-md-6 mb-4">
+                  <input type="text" class="form-control" placeholder="Your Name" required>
+                </div>
+                <div class="col-md-6 mb-4">
+                  <input type="email" class="form-control" placeholder="Your Email" required>
+                </div>
+              </div>
+              <div class="mb-4">
+                <input type="text" class="form-control" placeholder="Subject">
+              </div>
+              <div class="mb-4">
+                <textarea class="form-control" rows="5" placeholder="Your Message" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 py-3">Send Message</button>
+            </form>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="contact-info">
+            <h3 class="text-white mb-4">Contact Information</h3>
+            <div class="contact-item">
+              <i class="fas fa-map-marker-alt contact-icon"></i>
+              <div class="contact-text">
+                <h5>Our Location</h5>
+                <p>123 Medical Drive, Health City, HC 12345</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-phone-alt contact-icon"></i>
+              <div class="contact-text">
+                <h5>Call Us</h5>
+                <p>+1 (555) 123-4567<br>Emergency: +1 (555) 987-6543</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-envelope contact-icon"></i>
+              <div class="contact-text">
+                <h5>Email Us</h5>
+                <p>info@medicarehospital.com<br>support@medicarehospital.com</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-clock contact-icon"></i>
+              <div class="contact-text">
+                <h5>Opening Hours</h5>
+                <p>Monday - Friday: 8:00 AM - 8:00 PM<br>Saturday - Sunday: 9:00 AM - 5:00 PM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+          <div class="col-lg-4 mb-5 mb-lg-0">
+              <a href="#" class="footer-logo d-flex align-items-center">
+                  <img src="https://cdn-icons-png.flaticon.com/512/2967/2967393.png" alt="MediCare Hospital Logo" width="40" height="40" class="me-2">
+                  MediCare Hospital
+              </a>
+              <p class="footer-about">Providing exceptional healthcare services since 1995. Our mission is to deliver compassionate, high-quality care to every patient.</p>
+              <div class="social-icons">
+                  <a href="#"><i class="fab fa-facebook-f"></i></a>
+                  <a href="#"><i class="fab fa-twitter"></i></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                  <a href="#"><i class="fab fa-youtube"></i></a>
+              </div>
+          </div>
+          <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+              <h4>Quick Links</h4>
+              <ul>
+                  <li><a href="#">Home</a></li>
+                  <li><a href="#about">About Us</a></li>
+                  <li><a href="#services">Services</a></li>
+                  <li><a href="#doctors">Doctors</a></li>
+                  <li><a href="#testimonials">Testimonials</a></li>
+                  <li><a href="#contact">Contact</a></li>
+              </ul>
+          </div>
+          <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+              <h4>Services</h4>
+              <ul>
+                  <li><a href="#">Cardiology</a></li>
+                  <li><a href="#">Neurology</a></li>
+                  <li><a href="#">Orthopedics</a></li>
+                  <li><a href="#">Pediatrics</a></li>
+                  <li><a href="#">Radiology</a></li>
+                  <li><a href="#">Emergency</a></li>
+              </ul>
+          </div>
+          <div class="col-lg-4 col-md-12">
+              <h4>Newsletter</h4>
+              <p>Subscribe to our newsletter for health tips and hospital updates.</p>
+              <form class="mt-3">
+                  <div class="input-group mb-3">
+                      <input type="email" class="form-control" placeholder="Your Email" required>
+                      <button class="btn btn-primary" type="submit">Subscribe</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+      <div class="copyright text-center">
+          <p>&copy; 2023 MediCare Hospital. All Rights Reserved. | <a href="#" class="text-white-50">Privacy Policy</a> | <a href="#" class="text-white-50">Terms of Service</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <a href="#" class="btn btn-primary btn-lg back-to-top" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 99; border-radius: 50%; width: 50px; height: 50px; padding: 0; text-align: center; line-height: 46px;">
+    <i class="fas fa-arrow-up"></i>
+  </a>
+
+  <!-- Bootstrap + Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+      
+      // Back to top button
+      const backToTop = document.querySelector('.back-to-top');
+      if (window.scrollY > 300) {
+        backToTop.style.display = 'block';
+      } else {
+        backToTop.style.display = 'none';
+      }
+    });
+    
+    // Scroll animation
+    const fadeElements = document.querySelectorAll('.feature-card, .doctor-card, .testimonial-card');
+    
+    const fadeOnScroll = function() {
+      fadeElements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        
+        if (elementTop < windowHeight - 100) {
+          element.classList.add('show');
+        }
+      });
+    };
+    
+    window.addEventListener('scroll', fadeOnScroll);
+    window.addEventListener('load', fadeOnScroll);
+    
+    // Floating elements animation
+    const floatingElements = document.querySelectorAll('.floating-element');
+    floatingElements.forEach(el => {
+      const randomDelay = Math.random() * 5;
+      const randomDuration = 10 + Math.random() * 20;
+      const randomSize = 5 + Math.random() * 10;
+      
+     el.style.animationDelay = `${randomDelay}s`;
+el.style.animationDuration = `${randomDuration}s`;
+el.style.width = `${randomSize}px`;
+el.style.height = `${randomSize}px`;
+
+    });
+    
+    // Form submission
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Show success modal
+        const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+        modal.show();
+        
+        // Reset form
+        contactForm.reset();
+      });
+    }
+    
+    // Back to top button functionality
+    document.querySelector('.back-to-top').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  </script>
+  
+  <!-- Message Sent Modal -->
+  <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title w-100" id="messageModalLabel">Success</h5>
+          <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-4">
+          <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
+          <h4 class="mb-3">Thank You!</h4>
+          <p>Your message has been sent successfully. Our team will contact you shortly.</p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-primary mx-auto" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

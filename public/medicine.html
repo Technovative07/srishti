@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Medicine Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      font-family: 'Segoe UI', sans-serif;
+      padding-top: 70px;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: linear-gradient(90deg, #00796b, #26a69a);
+      border-radius: 0 0 15px 15px;
+      padding: 10px 20px;
+      z-index: 1000;
+      animation: slideDown 0.7s ease-in-out;
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      color: white;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .nav-link {
+      color: white !important;
+      font-weight: 500;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #ffc107 !important;
+      transform: translateY(-2px);
+    }
+
+    @keyframes slideDown {
+      0% {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-section, .table-section, .about-section, .contact-section {
+      background: #ffffff;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 40px;
+      animation: fadeInUp 0.8s ease-in-out;
+    }
+
+    .btn-custom {
+      background-color: #00796b;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .btn-custom:hover {
+      background-color: #004d40;
+      transform: scale(1.05);
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #004d40;
+    }
+
+    footer {
+      background-color: #004d40;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="#">💊 MediTrack</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav gap-2">
+        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#medicineForm">Add Medicine</a></li>
+        <li class="nav-item"><a class="nav-link" href="#medicineTableBody">View Medicines</a></li>
+        <li class="nav-item"><a class="nav-link" href="#aboutSection">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contactSection">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="form-section" id="medicineForm">
+    <h2 class="section-title">Add New Medicine</h2>
+    <form id="addMedicineForm">
+      <div class="row mb-3">
+        <div class="col-md-6"><label class="form-label">Name</label><input type="text" class="form-control" name="name" required /></div>
+        <div class="col-md-6"><label class="form-label">Generic Name</label><input type="text" class="form-control" name="genericName" required /></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6"><label class="form-label">Manufacturer</label><input type="text" class="form-control" name="manufacturer" /></div>
+        <div class="col-md-6"><label class="form-label">Dosage Form</label><input type="text" class="form-control" name="dosageForm" required /></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6"><label class="form-label">Strength</label><input type="text" class="form-control" name="strength" required /></div>
+        <div class="col-md-6"><label class="form-label">Side Effects</label><input type="text" class="form-control" name="sideEffects" /></div>
+      </div>
+      <button type="submit" class="btn btn-custom w-100">Submit</button>
+    </form>
+  </div>
+
+  <div class="table-section">
+    <h2 class="section-title">Medicine Records</h2>
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Generic Name</th>
+          <th>Manufacturer</th>
+          <th>Dosage Form</th>
+          <th>Strength</th>
+          <th>Side Effects</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      <tbody id="medicineTableBody">
+        <!-- Filled dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <div class="about-section" id="aboutSection">
+    <h2 class="section-title">About MediTrack</h2>
+    <p>MediTrack is your digital assistant for medicine tracking and management, built to simplify workflows for hospitals and pharmacies. Fully customizable, it allows easy addition and viewing of medicines with a beautiful UI.</p>
+  </div>
+
+  <div class="contact-section" id="contactSection">
+    <h2 class="section-title">Contact Us</h2>
+    <p>Email: support@meditrack.com<br>Phone: +91 98765 43210<br>Address: MediTrack Inc., Bengaluru, India</p>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2025 MediTrack. All rights reserved.</p>
+</footer>
+
+<script>
+  const form = document.getElementById("addMedicineForm");
+  const tableBody = document.getElementById("medicineTableBody");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    const now = new Date().toLocaleString();
+
+    const row = `<tr>
+      <td>${data.name}</td>
+      <td>${data.genericName}</td>
+      <td>${data.manufacturer}</td>
+      <td>${data.dosageForm}</td>
+      <td>${data.strength}</td>
+      <td>${data.sideEffects}</td>
+      <td>${now}</td>
+    </tr>`;
+
+    tableBody.innerHTML += row;
+    form.reset();
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

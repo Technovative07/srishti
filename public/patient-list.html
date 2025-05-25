@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Patient List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    #wrapper {
+      display: flex;
+      transition: all 0.3s ease;
+    }
+    #sidebar-wrapper {
+      min-width: 250px;
+      max-width: 250px;
+      transition: all 0.3s ease;
+      background-color: #212529;
+      color: white;
+      min-height: 100vh;
+    }
+    #wrapper.toggled #sidebar-wrapper {
+      margin-left: -250px;
+    }
+    .list-group-item {
+      border: none;
+    }
+    .patient-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .patient-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+    .modal-content input, .modal-content select {
+      border-radius: 0.375rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="d-flex" id="wrapper">
+  <div class="border-end" id="sidebar-wrapper">
+    <div class="sidebar-heading px-4 py-3 fw-bold fs-4 border-bottom">Hospital Copilot</div>
+    <div class="list-group list-group-flush">
+      <a href="#" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+      <a href="#" class="list-group-item list-group-item-action bg-dark text-white active">Patients</a>
+      <a href="#" class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
+      <a href="#" class="list-group-item list-group-item-action bg-dark text-white">Reports</a>
+    </div>
+  </div>
+
+  <!-- Page Content -->
+  <div id="page-content-wrapper" class="w-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+      <div class="container-fluid">
+        <button class="btn btn-outline-dark" id="menu-toggle">☰</button>
+        <span class="ms-auto fw-bold">Patient List</span>
+      </div>
+    </nav>
+
+    <div class="container-fluid px-4 mt-4">
+      <!-- Actions -->
+      <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+        <input type="text" class="form-control w-50" placeholder="Search patient by name..." />
+        <select class="form-select w-auto">
+          <option selected>Filter Status</option>
+          <option value="1">In Treatment</option>
+          <option value="2">Recovered</option>
+          <option value="3">Critical</option>
+        </select>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPatientModal">+ Add Patient</button>
+      </div>
+
+      <!-- Patient Cards -->
+      <div class="row g-4">
+        <!-- Patient 1 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card patient-card shadow">
+            <div class="card-body">
+              <h5 class="card-title">John Doe</h5>
+              <p class="card-text">Age: 29<br>Gender: Male<br>Condition: Asthma</p>
+              <span class="badge bg-success">Recovered</span>
+            </div>
+          </div>
+        </div>
+        <!-- Patient 2 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card patient-card shadow">
+            <div class="card-body">
+              <h5 class="card-title">Maria Smith</h5>
+              <p class="card-text">Age: 42<br>Gender: Female<br>Condition: Diabetes</p>
+              <span class="badge bg-warning text-dark">In Treatment</span>
+            </div>
+          </div>
+        </div>
+        <!-- Patient 3 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card patient-card shadow">
+            <div class="card-body">
+              <h5 class="card-title">Ali Khan</h5>
+              <p class="card-text">Age: 34<br>Gender: Male<br>Condition: COVID-19</p>
+              <span class="badge bg-danger">Critical</span>
+            </div>
+          </div>
+        </div>
+        <!-- Add more cards here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Patient Modal -->
+<div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Patient</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input class="form-control mb-2" type="text" placeholder="Full Name" required>
+        <input class="form-control mb-2" type="number" placeholder="Age" required>
+        <select class="form-control mb-2">
+          <option>Gender</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+        <input class="form-control mb-2" type="text" placeholder="Condition" required>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Patient</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.getElementById("menu-toggle").addEventListener("click", function () {
+    document.getElementById("wrapper").classList.toggle("toggled");
+  });
+</script>
+</body>
+</html>

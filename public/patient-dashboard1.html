@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Patient Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    :root {
+      --primary: #4a90e2;
+      --primary-dark: #2a6fc9;
+      --secondary: #6c757d;
+      --success: #28a745;
+      --info: #17a2b8;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --dark: #1e1e2f;
+      --light: #f5f9ff;
+      --transition: all 0.3s ease-in-out;
+      --sidebar-width: 250px;
+      --sidebar-collapsed: 70px;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--light);
+      color: #333;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: var(--sidebar-width);
+      height: 100%;
+      background: var(--dark);
+      color: #fff;
+      transition: var(--transition);
+      z-index: 999;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    #sidebar.collapsed {
+      width: var(--sidebar-collapsed);
+    }
+
+    #sidebar h3 {
+      padding: 1rem 1.5rem;
+      font-size: 22px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      margin: 0;
+      height: 70px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    #sidebar h3 i {
+      margin-right: 10px;
+      transition: var(--transition);
+    }
+
+    #sidebar.collapsed h3 i {
+      margin-right: 0;
+    }
+
+    #sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #sidebar ul li {
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #sidebar ul li.active {
+      background: rgba(74, 144, 226, 0.2);
+      border-left: 3px solid var(--primary);
+    }
+
+    #sidebar ul li:hover {
+      background: #34344e;
+    }
+
+    #sidebar ul li i {
+      width: 25px;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    #sidebar ul li span {
+      margin-left: 10px;
+      white-space: nowrap;
+    }
+
+    #sidebar.collapsed ul li span {
+      display: none;
+    }
+
+    #sidebar ul li .badge {
+      position: absolute;
+      right: 20px;
+      background: var(--danger);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      transition: var(--transition);
+    }
+
+    #sidebar.collapsed ul li .badge {
+      right: 5px;
+      top: 10px;
+    }
+
+    /* Main Content */
+    #main-content {
+      margin-left: var(--sidebar-width);
+      padding: 2rem;
+      transition: var(--transition);
+      min-height: 100vh;
+    }
+
+    #sidebar.collapsed + #main-content {
+      margin-left: var(--sidebar-collapsed);
+    }
+
+    .toggle-btn {
+      position: fixed;
+      left: calc(var(--sidebar-width) + 10px);
+      top: 20px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 1000;
+      transition: var(--transition);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .toggle-btn:hover {
+      background-color: var(--primary-dark);
+      transform: scale(1.05);
+    }
+
+    #sidebar.collapsed ~ .toggle-btn {
+      left: calc(var(--sidebar-collapsed) + 10px);
+    }
+
+    .card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+      background: white;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      border-bottom: none;
+    }
+
+    .section-title {
+      font-weight: 600;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: var(--dark);
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .section-title:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 50px;
+      height: 3px;
+      background: var(--primary);
+    }
+
+    .notification {
+      border-left: 5px solid var(--primary);
+      background: #fff;
+      padding: 1rem;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      animation: fadeIn 0.6s ease;
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .notification:hover {
+      transform: translateX(5px);
+    }
+
+    .notification i {
+      margin-right: 10px;
+      font-size: 20px;
+    }
+
+    .notification.alert {
+      border-left-color: var(--danger);
+    }
+
+    .notification.warning {
+      border-left-color: var(--warning);
+    }
+
+    .notification.success {
+      border-left-color: var(--success);
+    }
+
+    @keyframes fadeIn {
+      from {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .health-metric {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      background: rgba(255,255,255,0.8);
+      transition: var(--transition);
+    }
+
+    .health-metric:hover {
+      background: white;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+
+    .health-metric i {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-right: 15px;
+      color: white;
+    }
+
+    .metric-icon-1 { background: var(--primary); }
+    .metric-icon-2 { background: var(--success); }
+    .metric-icon-3 { background: var(--warning); color: #333 !important; }
+    .metric-icon-4 { background: var(--danger); }
+
+    .progress {
+      height: 8px;
+      border-radius: 4px;
+    }
+
+    .progress-bar {
+      background-color: var(--primary);
+    }
+
+    .appointment-card {
+      border-left: 4px solid var(--primary);
+      margin-bottom: 15px;
+      transition: var(--transition);
+    }
+
+    .appointment-card:hover {
+      transform: translateX(5px);
+    }
+
+    .appointment-card .btn {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .medication-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      transition: var(--transition);
+    }
+
+    .medication-item:hover {
+      background: #f8f9fa;
+    }
+
+    .medication-item .time {
+      font-weight: bold;
+      color: var(--primary);
+      margin-right: 15px;
+      min-width: 80px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 250px;
+      width: 100%;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--primary), #6a11cb);
+      color: white;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    .user-profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      margin-right: 20px;
+    }
+
+    .user-profile h4 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .user-profile p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    .floating-action-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 100;
+      transition: var(--transition);
+    }
+
+    .floating-action-btn:hover {
+      transform: scale(1.1);
+      background: var(--primary-dark);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      #sidebar {
+        transform: translateX(-100%);
+      }
+      
+      #sidebar.show {
+        transform: translateX(0);
+      }
+      
+      #main-content {
+        margin-left: 0;
+      }
+      
+      .toggle-btn {
+        left: 20px;
+      }
+      
+      #sidebar.collapsed ~ .toggle-btn {
+        left: 20px;
+      }
+      
+      .floating-action-btn {
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .user-profile {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .user-profile img {
+        margin-right: 0;
+        margin-bottom: 15px;
+      }
+    }
+
+    /* Page transitions */
+    .page {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .page.active {
+      display: block;
+    }
+    
+    /* Pulse animation for alerts */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+  </style>
+</head>
+<body>
+    <!-- Sidebar -->
+  <div id="sidebar">
+    <h3><i class="fas fa-heartbeat"></i> <span>Patient Portal</span></h3>
+    <ul>
+      <li class="active" onclick="showPage('dashboard')"><i class="fas fa-tachometer-alt"></i><span> Dashboard</span></li>
+      <li onclick="showPage('appointments')"><i class="fas fa-calendar-check"></i><span> Appointments</span><span class="badge">3</span></li>
+      <li onclick="showPage('reports')"><i class="fas fa-vial"></i><span> Lab Reports</span><span class="badge">2</span></li>
+      <li onclick="showPage('prescriptions')"><i class="fas fa-notes-medical"></i><span> Prescriptions</span></li>
+      <li onclick="showPage('medications')"><i class="fas fa-pills"></i><span> Medications</span></li>
+      <li onclick="showPage('alerts')"><i class="fas fa-bell"></i><span> Alerts</span><span class="badge">1</span></li>
+      <li onclick="showPage('telehealth')"><i class="fas fa-video"></i><span> Telehealth</span></li>
+      <li onclick="showPage('settings')"><i class="fas fa-user-cog"></i><span> Settings</span></li>
+      <li onclick="showPage('help')"><i class="fas fa-question-circle"></i><span> Help</span></li>
+      <li onclick="logout()"><i class="fas fa-sign-out-alt"></i><span> Logout</span></li>
+    </ul>
+  </div>
+
+  <!-- Toggle Button -->
+  <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+  <!-- Floating Action Button -->
+  <div class="floating-action-btn pulse" onclick="showEmergencyModal()">
+    <i class="fas fa-plus"></i>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <!-- Dashboard Page -->
+    <div class="page active" id="dashboard">
+      <div class="user-profile animate_animated animate_fadeIn">
+        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Patient Photo">
+        <div>
+          <h4>Sarah Johnson</h4>
+          <p>Patient ID: PA-7842-2023</p>
+          <p>Last Visit: May 15, 2023</p>
+        </div>
+      </div>
+
+      <div class="row g-4 animate_animated animate_fadeInUp">
+        <div class="col-md-3">
+          <div class="card p-3 text-center bg-primary text-white h-100">
+            <i class="fas fa-calendar-alt mb-2" style="font-size: 2rem;"></i>
+            <h5>Upcoming Appointment</h5>
+            <p class="mb-1">May 28, 10:00 AM</p>
+            <small>Dr. Smith - Cardiology</small>
+            <button class="btn btn-light btn-sm mt-2">View Details</button>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 text-center bg-success text-white h-100">
+            <i class="fas fa-pills mb-2" style="font-size: 2rem;"></i>
+            <h5>Medications</h5>
+            <p class="mb-1">5 Ongoing</p>
+            <small>2 Due Today</small>
+            <button class="btn btn-light btn-sm mt-2">Manage</button>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 text-center bg-warning text-dark h-100">
+            <i class="fas fa-file-medical mb-2" style="font-size: 2rem;"></i>
+            <h5>Reports</h5>
+            <p class="mb-1">2 New</p>
+            <small>Bloodwork Ready</small>
+            <button class="btn btn-dark btn-sm mt-2">View Reports</button>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 text-center bg-danger text-white h-100">
+            <i class="fas fa-exclamation-triangle mb-2" style="font-size: 2rem;"></i>
+            <h5>Critical Alerts</h5>
+            <p class="mb-1">1 Emergency</p>
+            <small>High Blood Pressure</small>
+            <button class="btn btn-light btn-sm mt-2">View Alert</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <h4 class="section-title">Appointments Timeline</h4>
+          <div class="card p-3 mb-4">
+            <div class="appointment-card p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-1">Cardiologist Appointment</h6>
+                  <p class="mb-1 text-muted"><i class="far fa-calendar-alt"></i> May 28, 2023 - 10:00 AM</p>
+                  <p class="mb-0"><i class="fas fa-user-md"></i> Dr. Michael Smith</p>
+                </div>
+                <button class="btn btn-outline-primary btn-sm">Details</button>
+              </div>
+            </div>
+            <div class="appointment-card p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-1">Dental Checkup</h6>
+                  <p class="mb-1 text-muted"><i class="far fa-calendar-alt"></i> June 2, 2023 - 2:30 PM</p>
+                  <p class="mb-0"><i class="fas fa-user-md"></i> Dr. Ana Rodriguez</p>
+                </div>
+                <button class="btn btn-outline-primary btn-sm">Details</button>
+              </div>
+            </div>
+            <div class="appointment-card p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="mb-1">Eye Examination</h6>
+                  <p class="mb-1 text-muted"><i class="far fa-calendar-alt"></i> June 10, 2023 - 9:15 AM</p>
+                  <p class="mb-0"><i class="fas fa-user-md"></i> Dr. James Wilson</p>
+                </div>
+                <button class="btn btn-outline-primary btn-sm">Details</button>
+              </div>
+            </div>
+            <button class="btn btn-primary mt-2 w-100">Schedule New Appointment</button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h4 class="section-title">Health Metrics</h4>
+          <div class="card p-3 mb-4">
+            <div class="health-metric">
+              <i class="fas fa-heartbeat metric-icon-1"></i>
+              <div style="flex: 1;">
+                <div class="d-flex justify-content-between">
+                  <strong>Heart Rate</strong>
+                  <span>72 bpm</span>
+                </div>
+                <div class="progress mt-1">
+                  <div class="progress-bar" role="progressbar" style="width: 60%"></div>
+                </div>
+                <small class="text-muted">Normal range: 60-100 bpm</small>
+              </div>
+            </div>
+            <div class="health-metric">
+              <i class="fas fa-tint metric-icon-2"></i>
+              <div style="flex: 1;">
+                <div class="d-flex justify-content-between">
+                  <strong>Blood Pressure</strong>
+                  <span>142/88 mmHg</span>
+                </div>
+                <div class="progress mt-1">
+                  <div class="progress-bar bg-warning" role="progressbar" style="width: 80%"></div>
+                </div>
+                <small class="text-muted">Elevated (Normal: <120/80)</small>
+              </div>
+            </div>
+            <div class="health-metric">
+              <i class="fas fa-weight metric-icon-3"></i>
+              <div style="flex: 1;">
+                <div class="d-flex justify-content-between">
+                  <strong>Weight</strong>
+                  <span>68.5 kg</span>
+                </div>
+                <div class="progress mt-1">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: 45%"></div>
+                </div>
+                <small class="text-muted">Healthy BMI: 22.4</small>
+              </div>
+            </div>
+            <div class="health-metric">
+              <i class="fas fa-chart-line metric-icon-4"></i>
+              <div style="flex: 1;">
+                <div class="d-flex justify-content-between">
+                  <strong>Blood Sugar</strong>
+                  <span>128 mg/dL</span>
+                </div>
+                <div class="progress mt-1">
+                  <div class="progress-bar bg-danger" role="progressbar" style="width: 70%"></div>
+                </div>
+                <small class="text-muted">Slightly high (Normal fasting: <100)</small>
+              </div>
+            </div>
+            <button class="btn btn-outline-primary mt-2 w-100">Add New Measurement</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h4 class="section-title">Notifications</h4>
+          <div class="notification success">
+            <i class="fas fa-check-circle"></i>
+            <div>
+              <strong>Prescription Refilled</strong>
+              <p>Your prescription for Metformin has been refilled and is ready for pickup.</p>
+              <small>10 minutes ago</small>
+            </div>
+          </div>
+          <div class="notification">
+            <i class="fas fa-pills"></i>
+            <div>
+              <strong>Medication Reminder</strong>
+              <p>Time to take your morning medication (Lisinopril 10mg).</p>
+              <small>Today, 8:00 AM</small>
+            </div>
+          </div>
+          <div class="notification warning">
+            <i class="fas fa-file-medical"></i>
+            <div>
+              <strong>Lab Report Ready</strong>
+              <p>Your bloodwork results from May 12 are now available.</p>
+              <small>Yesterday, 3:45 PM</small>
+            </div>
+          </div>
+          <div class="notification alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+              <strong>Critical Alert</strong>
+              <p>Your last blood pressure reading was high (142/88). Please consult your doctor.</p>
+              <small>May 18, 2023</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h4 class="section-title">Today's Medications</h4>
+          <div class="card p-3">
+            <div class="medication-item">
+              <div class="time">8:00 AM</div>
+              <div>
+                <strong>Lisinopril</strong>
+                <p class="mb-0">10mg • For high blood pressure</p>
+              </div>
+              <button class="btn btn-sm btn-outline-success ms-auto">Taken</button>
+            </div>
+            <div class="medication-item">
+              <div class="time">12:00 PM</div>
+              <div>
+                <strong>Metformin</strong>
+                <p class="mb-0">500mg • For type 2 diabetes</p>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary ms-auto">Mark</button>
+            </div>
+            <div class="medication-item">
+              <div class="time">6:00 PM</div>
+              <div>
+                <strong>Atorvastatin</strong>
+                <p class="mb-0">20mg • For cholesterol</p>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary ms-auto">Mark</button>
+            </div>
+            <div class="medication-item">
+              <div class="time">9:00 PM</div>
+              <div>
+                <strong>Melatonin</strong>
+                <p class="mb-0">3mg • For sleep</p>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary ms-auto">Mark</button>
+            </div>
+            <button class="btn btn-primary mt-2 w-100">View All Medications</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appointments Page -->
+    <div class="page" id="appointments">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">My Appointments</h2>
+        <button class="btn btn-primary" onclick="showScheduleModal()">
+          <i class="fas fa-plus"></i> Schedule New
+        </button>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" href="#" onclick="filterAppointments('upcoming')">Upcoming</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="filterAppointments('past')">Past</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="filterAppointments('cancelled')">Cancelled</a>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>Provider</th>
+                  <th>Specialty</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>May 28, 2023<br>10:00 AM</td>
+                  <td>Dr. Michael Smith</td>
+                  <td>Cardiology</td>
+                  <td>Main Hospital, Room 302</td>
+                  <td><span class="badge bg-success">Confirmed</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">Details</button>
+                    <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>June 2, 2023<br>2:30 PM</td>
+                  <td>Dr. Ana Rodriguez</td>
+                  <td>Dentistry</td>
+                  <td>Dental Center, Suite 105</td>
+                  <td><span class="badge bg-success">Confirmed</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">Details</button>
+                    <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>June 10, 2023<br>9:15 AM</td>
+                  <td>Dr. James Wilson</td>
+                  <td>Ophthalmology</td>
+                  <td>Eye Care Center</td>
+                  <td><span class="badge bg-warning text-dark">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary">Details</button>
+                    <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="mb-0">Telehealth Appointments</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <h6 class="mb-1">Follow-up Consultation</h6>
+              <p class="mb-1 text-muted">June 5, 2023 - 11:00 AM</p>
+              <p class="mb-0"><i class="fas fa-user-md"></i> Dr. Emily Chen</p>
+            </div>
+            <button class="btn btn-primary">Join Video Call</button>
+          </div>
+          <hr>
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h6 class="mb-1">Nutrition Counseling</h6>
+              <p class="mb-1 text-muted">June 15, 2023 - 3:00 PM</p>
+              <p class="mb-0"><i class="fas fa-user-md"></i> Dr. Robert Johnson</p>
+            </div>
+            <button class="btn btn-outline-secondary">Add to Calendar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lab Reports Page -->
+    <div class="page" id="reports">
+      <h2 class="mb-4">Lab Reports</h2>
+      
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Recent Reports</h5>
+          <button class="btn btn-sm btn-outline-primary">Request New Test</button>
+        </div>
+        <div class="card-body">
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">Complete Blood Count (CBC)</h6>
+                <small class="text-success">New</small>
+              </div>
+              <p class="mb-1">Collected: May 12, 2023</p>
+              <small>Status: Results available</small>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">Lipid Panel</h6>
+                <small class="text-success">New</small>
+              </div>
+              <p class="mb-1">Collected: May 12, 2023</p>
+              <small>Status: Results available</small>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">Hemoglobin A1C</h6>
+                <small>3 months ago</small>
+              </div>
+              <p class="mb-1">Collected: February 10, 2023</p>
+              <small>Status: Results available</small>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Bloodwork Results - May 12, 2023</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Test</th>
+                  <th>Result</th>
+                  <th>Reference Range</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Glucose</td>
+                  <td>128 mg/dL</td>
+                  <td>70-99 mg/dL</td>
+                  <td><span class="badge bg-warning text-dark">High</span></td>
+                </tr>
+                <tr>
+                  <td>Cholesterol</td>
+                  <td>198 mg/dL</td>
+                  <td><200 mg/dL</td>
+                  <td><span class="badge bg-success">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>Triglycerides</td>
+                  <td>150 mg/dL</td>
+                  <td><150 mg/dL</td>
+                  <td><span class="badge bg-success">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>HDL</td>
+                  <td>42 mg/dL</td>
+                  <td>>40 mg/dL</td>
+                  <td><span class="badge bg-success">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>LDL</td>
+                  <td>126 mg/dL</td>
+                  <td><100 mg/dL</td>
+                  <td><span class="badge bg-warning text-dark">High</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-3">
+            <button class="btn btn-primary me-2">
+              <i class="fas fa-download"></i> Download Report
+            </button>
+            <button class="btn btn-outline-secondary">
+              <i class="fas fa-share"></i> Share with Doctor
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prescriptions Page -->
+    <div class="page" id="prescriptions">
+      <h2 class="mb-4">My Prescriptions</h2>
+      
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Active Prescriptions</h5>
+          <button class="btn btn-sm btn-primary">Request Refill</button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Medication</th>
+                  <th>Dosage</th>
+                  <th>Frequency</th>
+                  <th>Prescribed</th>
+                  <th>Refills</th>
+                  <th>Pharmacy</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Lisinopril</strong>
+                    <p class="mb-0 text-muted">For high blood pressure</p>
+                  </td>
+                  <td>10 mg</td>
+                  <td>Once daily</td>
+                  <td>Apr 15, 2023</td>
+                  <td>3 remaining</td>
+                  <td>CVS #1234</td>
+                  <td><span class="badge bg-success">Active</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Metformin</strong>
+                    <p class="mb-0 text-muted">For type 2 diabetes</p>
+                  </td>
+                  <td>500 mg</td>
+                  <td>Twice daily</td>
+                  <td>Mar 28, 2023</td>
+                  <td>1 remaining</td>
+                  <td>Walgreens #567</td>
+                  <td><span class="badge bg-success">Active</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Atorvastatin</strong>
+                    <p class="mb-0 text-muted">For high cholesterol</p>
+                  </td>
+                  <td>20 mg</td>
+                  <td>Once daily</td>
+                  <td>Feb 10, 2023</td>
+                  <td>No refills</td>
+                  <td>CVS #1234</td>
+                  <td><span class="badge bg-warning text-dark">Needs renewal</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Prescription History</h5>
+        </div>
+        <div class="card-body">
+          <div class="accordion" id="prescriptionHistory">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                  <i class="fas fa-prescription-bottle me-2"></i> 2023 Prescriptions
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#prescriptionHistory">
+                <div class="accordion-body">
+                  <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Amoxicillin - 500mg (Completed)
+                      <span class="badge bg-secondary">Jan 5, 2023</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Ibuprofen - 400mg (Completed)
+                      <span class="badge bg-secondary">Feb 2, 2023</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                  <i class="fas fa-prescription-bottle me-2"></i> 2022 Prescriptions
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#prescriptionHistory">
+                <div class="accordion-body">
+                  <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Omeprazole - 20mg (Completed)
+                      <span class="badge bg-secondary">Nov 15, 2022</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Azithromycin - 250mg (Completed)
+                      <span class="badge bg-secondary">Aug 10, 2022</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Medications Page -->
+    <div class="page" id="medications">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Medication Management</h2>
+        <button class="btn btn-primary" onclick="showAddMedicationModal()">
+          <i class="fas fa-plus"></i> Add Medication
+        </button>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Today's Schedule</h5>
+            </div>
+            <div class="card-body">
+              <div class="medication-item">
+                <div class="time">8:00 AM</div>
+                <div>
+                  <strong>Lisinopril</strong>
+                  <p class="mb-0">10mg • For high blood pressure</p>
+                </div>
+                <button class="btn btn-sm btn-success ms-auto">Taken</button>
+              </div>
+              <div class="medication-item">
+                <div class="time">12:00 PM</div>
+                <div>
+                  <strong>Metformin</strong>
+                  <p class="mb-0">500mg • For type 2 diabetes</p>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary ms-auto">Mark</button>
+              </div>
+              <div class="medication-item">
+                <div class="time">6:00 PM</div>
+                <div>
+                  <strong>Atorvastatin</strong>
+                  <p class="mb-0">20mg • For cholesterol</p>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary ms-auto">Mark</button>
+              </div>
+              <div class="medication-item">
+                <div class="time">9:00 PM</div>
+                <div>
+                  <strong>Melatonin</strong>
+                  <p class="mb-0">3mg • For sleep</p>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary ms-auto">Mark</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Medication Adherence</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="adherenceChart"></canvas>
+              </div>
+              <div class="text-center mt-3">
+                <p class="mb-1">Your adherence rate this month: <strong>87%</strong></p>
+                <div class="progress">
+                  <div class="progress-bar" role="progressbar" style="width: 87%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Current Medications</h5>
+            </div>
+            <div class="card-body">
+              <div class="medication-item">
+                <div class="time">Daily</div>
+                <div>
+                  <strong>Lisinopril</strong>
+                  <p class="mb-0">10mg • Morning • For high blood pressure</p>
+                  <small>Prescribed by Dr. Smith on Apr 15, 2023</small>
+                </div>
+                <button class="btn btn-sm btn-outline-primary ms-auto">Edit</button>
+              </div>
+              <div class="medication-item">
+                <div class="time">2x Daily</div>
+                <div>
+                  <strong>Metformin</strong>
+                  <p class="mb-0">500mg • Morning & Evening • For type 2 diabetes</p>
+                  <small>Prescribed by Dr. Chen on Mar 28, 2023</small>
+                </div>
+                <button class="btn btn-sm btn-outline-primary ms-auto">Edit</button>
+              </div>
+              <div class="medication-item">
+                <div class="time">Daily</div>
+                <div>
+                  <strong>Atorvastatin</strong>
+                  <p class="mb-0">20mg • Evening • For cholesterol</p>
+                  <small>Prescribed by Dr. Wilson on Feb 10, 2023</small>
+                </div>
+                <button class="btn btn-sm btn-outline-primary ms-auto">Edit</button>
+              </div>
+              <div class="medication-item">
+                <div class="time">As Needed</div>
+                <div>
+                  <strong>Melatonin</strong>
+                  <p class="mb-0">3mg • At bedtime • For sleep</p>
+                  <small>Prescribed by Dr. Rodriguez on Jan 5, 2023</small>
+                </div>
+                <button class="btn btn-sm btn-outline-primary ms-auto">Edit</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Refill Reminders</h5>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-warning">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-exclamation-circle me-3" style="font-size: 1.5rem;"></i>
+                  <div>
+                    <strong>Atorvastatin running low</strong>
+                    <p class="mb-0">You have 7 days of medication left. Request a refill now.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="alert alert-info">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-info-circle me-3" style="font-size: 1.5rem;"></i>
+                  <div>
+                    <strong>Metformin refill available</strong>
+                    <p class="mb-0">You have 1 refill remaining at Walgreens #567.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts Page -->
+    <div class="page" id="alerts">
+      <h2 class="mb-4">Health Alerts</h2>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header bg-danger text-white">
+              <h5 class="mb-0">Critical Alerts</h5>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-danger">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-exclamation-triangle me-3 mt-1"></i>
+                  <div>
+                    <h5>High Blood Pressure</h5>
+                    <p>Your last reading was 142/88 mmHg on May 18, 2023 which is considered elevated.</p>
+                    <p><strong>Recommended Action:</strong> Schedule a follow-up with your doctor.</p>
+                    <button class="btn btn-outline-danger">Dismiss</button>
+                    <button class="btn btn-danger ms-2">Contact Doctor</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header bg-warning text-dark">
+              <h5 class="mb-0">Warning Alerts</h5>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-warning">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-exclamation-circle me-3 mt-1"></i>
+                  <div>
+                    <h5>Elevated Blood Sugar</h5>
+                    <p>Your fasting glucose was 128 mg/dL on May 12, 2023 (normal range: 70-99).</p>
+                    <p><strong>Recommended Action:</strong> Monitor your diet and schedule a diabetes screening.</p>
+                    <button class="btn btn-outline-warning">Dismiss</button>
+                    <button class="btn btn-warning ms-2">Learn More</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0">Medication Alerts</h5>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-info">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-pills me-3 mt-1"></i>
+                  <div>
+                    <h5>Missed Medication</h5>
+                    <p>You missed your Metformin dose on May 20, 2023 at 12:00 PM.</p>
+                    <p><strong>Recommended Action:</strong> Take your next dose as scheduled.</p>
+                    <button class="btn btn-outline-info">Dismiss</button>
+                    <button class="btn btn-info ms-2">Snooze Reminder</button>
+                  </div>
+                </div>
+              </div>
+              <div class="alert alert-info">
+                <div class="d-flex align-items-start">
+                  <i class="fas fa-prescription-bottle me-3 mt-1"></i>
+                  <div>
+                    <h5>Refill Needed</h5>
+                    <p>Your Atorvastatin prescription will run out in 7 days.</p>
+                    <p><strong>Recommended Action:</strong> Request a refill from your doctor.</p>
+                    <button class="btn btn-outline-info">Dismiss</button>
+                    <button class="btn btn-info ms-2">Request Refill</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Alert Preferences</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Notification Methods</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="emailAlerts" checked>
+                    <label class="form-check-label" for="emailAlerts">Email Alerts</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="smsAlerts" checked>
+                    <label class="form-check-label" for="smsAlerts">SMS Alerts</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="pushAlerts">
+                    <label class="form-check-label" for="pushAlerts">Push Notifications</label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Alert Types</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="criticalAlerts" checked>
+                    <label class="form-check-label" for="criticalAlerts">Critical Health Alerts</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="medicationAlerts" checked>
+                    <label class="form-check-label" for="medicationAlerts">Medication Reminders</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="appointmentAlerts" checked>
+                    <label class="form-check-label" for="appointmentAlerts">Appointment Reminders</label>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Preferences</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Telehealth Page -->
+    <div class="page" id="telehealth">
+      <h2 class="mb-4">Telehealth Services</h2>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Upcoming Virtual Visits</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between mb-3 p-3 bg-light rounded">
+                <div>
+                  <h6 class="mb-1">Follow-up Consultation</h6>
+                  <p class="mb-1 text-muted">June 5, 2023 - 11:00 AM</p>
+                  <p class="mb-0"><i class="fas fa-user-md"></i> Dr. Emily Chen</p>
+                </div>
+                <button class="btn btn-primary">Join Call</button>
+              </div>
+              
+              <div class="d-flex align-items-center justify-content-between mb-3 p-3">
+                <div>
+                  <h6 class="mb-1">Nutrition Counseling</h6>
+                  <p class="mb-1 text-muted">June 15, 2023 - 3:00 PM</p>
+                  <p class="mb-0"><i class="fas fa-user-md"></i> Dr. Robert Johnson</p>
+                </div>
+                <button class="btn btn-outline-secondary">Add to Calendar</button>
+              </div>
+              
+              <div class="d-flex align-items-center justify-content-between p-3">
+                <div>
+                  <h6 class="mb-1">Therapy Session</h6>
+                  <p class="mb-1 text-muted">June 22, 2023 - 1:30 PM</p>
+                  <p class="mb-0"><i class="fas fa-user-md"></i> Dr. Sarah Miller</p>
+                </div>
+                <button class="btn btn-outline-secondary">Details</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Schedule New Virtual Visit</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Visit Type</label>
+                  <select class="form-select">
+                    <option selected>Select visit type</option>
+                    <option>Primary Care Consultation</option>
+                    <option>Specialist Follow-up</option>
+                    <option>Mental Health Therapy</option>
+                    <option>Nutrition Counseling</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Provider</label>
+                  <select class="form-select">
+                    <option selected>Select provider</option>
+                    <option>Dr. Emily Chen (Primary Care)</option>
+                    <option>Dr. Michael Smith (Cardiology)</option>
+                    <option>Dr. Sarah Miller (Therapy)</option>
+                    <option>Dr. Robert Johnson (Nutrition)</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Preferred Date</label>
+                  <input type="date" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Preferred Time</label>
+                  <select class="form-select">
+                    <option>Morning (8AM-12PM)</option>
+                    <option>Afternoon (12PM-5PM)</option>
+                    <option>Evening (5PM-8PM)</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Reason for Visit</label>
+                  <textarea class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Schedule Visit</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Past Virtual Visits</h5>
+            </div>
+            <div class="card-body">
+              <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Follow-up Consultation</h6>
+                    <small>May 10, 2023</small>
+                  </div>
+                  <p class="mb-1">Dr. Emily Chen</p>
+                  <small>Duration: 25 minutes</small>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Therapy Session</h6>
+                    <small>April 28, 2023</small>
+                  </div>
+                  <p class="mb-1">Dr. Sarah Miller</p>
+                  <small>Duration: 50 minutes</small>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">Nutrition Counseling</h6>
+                    <small>April 15, 2023</small>
+                  </div>
+                  <p class="mb-1">Dr. Robert Johnson</p>
+                  <small>Duration: 30 minutes</small>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Telehealth Resources</h5>
+            </div>
+            <div class="card-body">
+              <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-file-pdf me-3 text-danger" style="font-size: 1.5rem;"></i>
+                    <div>
+                      <h6 class="mb-1">Telehealth User Guide</h6>
+                      <p class="mb-0 text-muted">How to prepare for your virtual visit</p>
+                    </div>
+                  </div>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-video me-3 text-primary" style="font-size: 1.5rem;"></i>
+                    <div>
+                      <h6 class="mb-1">Video Tutorial</h6>
+                      <p class="mb-0 text-muted">How to join your virtual appointment</p>
+                    </div>
+                  </div>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <div class="d-flex align-items-center">
+                    <i class="fas fa-question-circle me-3 text-info" style="font-size: 1.5rem;"></i>
+                    <div>
+                      <h6 class="mb-1">FAQs</h6>
+                      <p class="mb-0 text-muted">Common questions about telehealth</p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Test Your Connection</h5>
+            </div>
+            <div class="card-body text-center">
+              <i class="fas fa-video fa-3x mb-3 text-primary"></i>
+              <h5>Check Your Setup</h5>
+              <p class="mb-4">Ensure your camera, microphone, and internet connection are working properly before your visit.</p>
+              <button class="btn btn-primary me-2">Test Camera</button>
+              <button class="btn btn-outline-primary">Test Microphone</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Page -->
+    <div class="page" id="settings">
+      <h2 class="mb-4">Account Settings</h2>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Profile Information</h5>
+            </div>
+            <div class="card-body text-center">
+              <img src="https://randomuser.me/api/portraits/women/65.jpg" class="rounded-circle mb-3" width="120" alt="Profile">
+              <button class="btn btn-sm btn-outline-primary mb-3">Change Photo</button>
+              <h5>Sarah Johnson</h5>
+              <p class="text-muted">Patient since 2018</p>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header bg-danger text-white">
+              <h5 class="mb-0">Danger Zone</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <button class="btn btn-outline-danger">Deactivate Account</button>
+                <button class="btn btn-danger">Delete Account</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-8">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Personal Details</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" value="Sarah">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" value="Johnson">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Date of Birth</label>
+                  <input type="date" class="form-control" value="1985-07-22">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Gender</label>
+                  <select class="form-select">
+                    <option>Female</option>
+                    <option>Male</option>
+                    <option>Other</option>
+                    <option>Prefer not to say</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Phone Number</label>
+                  <input type="tel" class="form-control" value="(555) 123-4567">
+                </div>
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+              </form>
+            </div>
+          </div>
+          
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Security</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Email Address</label>
+                  <input type="email" class="form-control" value="sarah.johnson@example.com">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Current Password</label>
+                  <input type="password" class="form-control" placeholder="Enter current password">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">New Password</label>
+                  <input type="password" class="form-control" placeholder="Enter new password">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Confirm New Password</label>
+                  <input type="password" class="form-control" placeholder="Confirm new password">
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="twoFactorAuth">
+                  <label class="form-check-label" for="twoFactorAuth">Enable Two-Factor Authentication</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Security Settings</button>
+              </form>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Notification Preferences</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Notification Methods</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notifyEmail" checked>
+                    <label class="form-check-label" for="notifyEmail">Email Notifications</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notifySMS" checked>
+                    <label class="form-check-label" for="notifySMS">SMS Notifications</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notifyPush">
+                    <label class="form-check-label" for="notifyPush">Push Notifications</label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Notification Types</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notifyAppointments" checked>
+                    <label class="form-check-label" for="notifyAppointments">Appointment Reminders</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notifyMedications" checked>
+                    <label class="form-check-label" for="notifyMedications">Medication Reminders</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notifyResults" checked>
+                    <label class="form-check-label" for="notifyResults">Test Results</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notifyAlerts" checked>
+                    <label class="form-check-label" for="notifyAlerts">Health Alerts</label>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Preferences</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Help Page -->
+    <div class="page" id="help">
+      <h2 class="mb-4">Help Center</h2>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Quick Links</h5>
+            </div>
+            <div class="card-body">
+              <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                  <i class="fas fa-question-circle me-2"></i> FAQs
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <i class="fas fa-book me-2"></i> User Guide
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <i class="fas fa-video me-2"></i> Video Tutorials
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <i class="fas fa-phone-alt me-2"></i> Contact Support
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Contact Us</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <h6><i class="fas fa-phone-alt me-2"></i> Phone Support</h6>
+                <p class="mb-0">(800) 123-4567</p>
+                <small class="text-muted">Available 24/7</small>
+              </div>
+              <div class="mb-3">
+                <h6><i class="fas fa-envelope me-2"></i> Email Support</h6>
+                <p class="mb-0">support@patientportal.com</p>
+                <small class="text-muted">Response within 24 hours</small>
+              </div>
+              <div>
+                <h6><i class="fas fa-comment-dots me-2"></i> Live Chat</h6>
+                <button class="btn btn-outline-primary">Start Chat</button>
+                <small class="d-block text-muted mt-1">Available Mon-Fri, 8AM-8PM</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-8">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Frequently Asked Questions</h5>
+            </div>
+            <div class="card-body">
+              <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqOne">
+                      How do I schedule an appointment?
+                    </button>
+                  </h2>
+                  <div id="faqOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                      <p>To schedule an appointment, navigate to the "Appointments" section and click "Schedule New". Select your provider, preferred date and time, and reason for visit. You'll receive a confirmation once your appointment is booked.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqTwo">
+                      How can I view my lab results?
+                    </button>
+                  </h2>
+                  <div id="faqTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                      <p>Lab results are available in the "Lab Reports" section. New results will be marked with a "New" badge. Click on any report to view detailed results. Some sensitive results may require provider approval before being visible.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqThree">
+                      How do I request a prescription refill?
+                    </button>
+                  </h2>
+                  <div id="faqThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                      <p>Go to the "Prescriptions" section and locate the medication you need refilled. Click the "Request Refill" button. Your request will be sent to your provider for approval. You'll be notified once the refill is ready.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqFour">
+                      How do I join a telehealth appointment?
+                    </button>
+                  </h2>
+                  <div id="faqFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                      <p>Navigate to the "Telehealth" section 5 minutes before your scheduled appointment time. Click "Join Call" when your appointment appears. Ensure your camera and microphone are working. You'll enter a virtual waiting room until your provider joins.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqFive">
+                      How do I update my personal information?
+                    </button>
+                  </h2>
+                  <div id="faqFive" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                      <p>Go to "Settings" and then "Personal Details". Make any necessary changes to your information and click "Update Profile". Note that some demographic information may require verification with our staff.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Submit a Support Ticket</h5>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="mb-3">
+                  <label class="form-label">Subject</label>
+                  <input type="text" class="form-control" placeholder="Brief description of your issue">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Category</label>
+                  <select class="form-select">
+                    <option selected>Select a category</option>
+                    <option>Account Issues</option>
+                    <option>Appointments</option>
+                    <option>Prescriptions</option>
+                    <option>Lab Results</option>
+                    <option>Technical Support</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Description</label>
+                  <textarea class="form-control" rows="5" placeholder="Please describe your issue in detail"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Attachments (optional)</label>
+                  <input type="file" class="form-control">
+                  <small class="text-muted">You can upload screenshots or documents to help us understand your issue.</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Ticket</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emergency Modal -->
+  <div class="modal fade" id="emergencyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Emergency Assistance</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>For life-threatening emergencies, call 911 immediately.</strong>
+          </div>
+          <p>If you're experiencing a medical emergency, please:</p>
+          <ol>
+            <li>Call 911 or your local emergency number</li>
+            <li>Go to the nearest emergency room</li>
+          </ol>
+          <hr>
+          <h5>Urgent Care Options</h5>
+          <div class="list-group mb-3">
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">City General Hospital</h6>
+                <small>24/7</small>
+              </div>
+              <p class="mb-1">123 Medical Center Dr</p>
+              <small>(555) 987-6543</small>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">Urgent Care Center</h6>
+                <small>8AM-10PM</small>
+              </div>
+              <p class="mb-1">456 Health Ave</p>
+              <small>(555) 789-0123</small>
+            </a>
+          </div>
+          <button class="btn btn-danger w-100">
+            <i class="fas fa-phone-alt me-2"></i> Connect with On-Call Doctor
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schedule Appointment Modal -->
+  <div class="modal fade" id="scheduleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Schedule New Appointment</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label class="form-label">Appointment Type</label>
+              <select class="form-select">
+                <option selected>Select appointment type</option>
+                <option>General Checkup</option>
+                <option>Follow-up Visit</option>
+                <option>Specialist Consultation</option>
+                <option>Lab Work</option>
+                <option>Vaccination</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Provider</label>
+              <select class="form-select">
+                <option selected>Select provider</option>
+                <option>Dr. Michael Smith (Primary Care)</option>
+                <option>Dr. Emily Chen (Primary Care)</option>
+                <option>Dr. James Wilson (Ophthalmology)</option>
+                <option>Dr. Ana Rodriguez (Dentistry)</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Preferred Date</label>
+              <input type="date" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Preferred Time</label>
+              <select class="form-select">
+                <option>Morning (8AM-12PM)</option>
+                <option>Afternoon (12PM-5PM)</option>
+                <option>Evening (5PM-8PM)</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Reason for Visit</label>
+              <textarea class="form-control" rows="3" placeholder="Briefly describe the reason for your visit"></textarea>
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="telehealthOption">
+              <label class="form-check-label" for="telehealthOption">I prefer a telehealth appointment (if available)</label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary">Schedule Appointment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Medication Modal -->
+  <div class="modal fade" id="addMedicationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Add New Medication</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label class="form-label">Medication Name</label>
+              <input type="text" class="form-control" placeholder="e.g., Lisinopril">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Dosage</label>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="e.g., 10">
+                <select class="form-select" style="max-width: 100px;">
+                  <option>mg</option>
+                  <option>mcg</option>
+                  <option>g</option>
+                  <option>mL</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Frequency</label>
+              <select class="form-select">
+                <option>Once daily</option>
+                <option>Twice daily</option>
+                <option>Three times daily</option>
+                <option>Four times daily</option>
+                <option>Every other day</option>
+                <option>Weekly</option>
+                <option>As needed</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Time of Day</label>
+              <select class="form-select" multiple>
+                <option>Morning</option>
+                <option>Noon</option>
+                <option>Afternoon</option>
+                <option>Evening</option>
+                <option>Bedtime</option>
+              </select>
+              <small class="text-muted">Hold Ctrl/Cmd to select multiple</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Start Date</label>
+              <input type="date" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Prescribing Doctor</label>
+              <input type="text" class="form-control" placeholder="Doctor's name">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Purpose</label>
+              <input type="text" class="form-control" placeholder="e.g., For high blood pressure">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" rows="3" placeholder="Any additional instructions"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary">Add Medication</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Toggle sidebar
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("collapsed");
+      
+      // For mobile view
+      if (window.innerWidth <= 992) {
+        document.getElementById("sidebar").classList.toggle("show");
+      }
+    }
+    
+    // Show page based on navigation
+    function showPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      
+      // Show selected page
+      document.getElementById(pageId).classList.add('active');
+      
+      // Update active nav item
+      document.querySelectorAll('#sidebar ul li').forEach(item => {
+        item.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+      
+      // Close sidebar on mobile after selection
+      if (window.innerWidth <= 992) {
+        document.getElementById("sidebar").classList.remove('show');
+      }
+    }
+    
+    // Show emergency modal
+    function showEmergencyModal() {
+      var modal = new bootstrap.Modal(document.getElementById('emergencyModal'));
+      modal.show();
+    }
+    
+    // Show schedule modal
+    function showScheduleModal() {
+      var modal = new bootstrap.Modal(document.getElementById('scheduleModal'));
+      modal.show();
+    }
+    
+    // Show add medication modal
+    function showAddMedicationModal() {
+      var modal = new bootstrap.Modal(document.getElementById('addMedicationModal'));
+      modal.show();
+    }
+    
+    // Filter appointments
+    function filterAppointments(filter) {
+      // In a real app, this would filter the displayed appointments
+      console.log('Filtering by:', filter);
+    }
+    
+    // Logout function
+    function logout() {
+      // In a real app, this would handle logout logic
+      console.log('Logging out...');
+      window.location.href = 'login.html';
+    }
+    
+    // Initialize charts
+    document.addEventListener('DOMContentLoaded', function() {
+      // Adherence Chart
+      const ctx = document.getElementById('adherenceChart').getContext('2d');
+      const adherenceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+          datasets: [{
+            label: 'Medication Adherence %',
+            data: [78, 82, 85, 80, 87],
+            backgroundColor: 'rgba(74, 144, 226, 0.2)',
+            borderColor: 'rgba(74, 144, 226, 1)',
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: 50,
+              max: 100
+            }
+          }
+        }
+      });
+    });
+    
+    // Handle mobile view
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 992) {
+        document.getElementById('sidebar').classList.remove('show');
+      }
+    });
+  </script>
+</body>
+</html>
